@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clareo — Transformez vos outils en applications web</title>
+    <meta name="description" content="Clareo transforme vos fichiers Excel, votre gestion bancaire, trésorerie, budgets et RH en applications web sur-mesure pour TPE et PME.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">&#9670;</span> Clareo
+            </a>
+            <div class="nav-links" id="navLinks">
+                <div class="nav-dropdown">
+                    <a href="#features" class="nav-dropdown-trigger">Fonctionnalités <span class="nav-arrow">&#9662;</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="excel.html">Transformation Excel</a>
+                        <a href="banque.html">Connexion bancaire</a>
+                        <a href="tresorerie.html">Suivi de trésorerie</a>
+                        <a href="budget.html">Gestion de budgets</a>
+                        <a href="rh.html">Gestion RH</a>
+                    </div>
+                </div>
+                <a href="#how-it-works">Comment ça marche</a>
+                <a href="#pricing">Tarifs</a>
+                <a href="#faq">FAQ</a>
+                <a href="#contact" class="btn btn-nav">Demander une démo</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-badge">Nouveau &middot; Pour les TPE &amp; PME</div>
+            <h1>Vos fichiers Excel deviennent des <span class="gradient-text">applications web</span></h1>
+            <p class="hero-subtitle">Clareo transforme vos tableurs, votre gestion bancaire, votre trésorerie, vos budgets et votre RH en applications en ligne — simples, sécurisées et accessibles partout.</p>
+            <div class="hero-ctas">
+                <a href="#contact" class="btn btn-primary btn-lg">Demander une démo gratuite</a>
+                <a href="#how-it-works" class="btn btn-outline btn-lg">Découvrir comment</a>
+            </div>
+            <div class="hero-proof">
+                <div class="hero-proof-item">
+                    <strong>0 ligne de code</strong>
+                    <span>à écrire de votre côté</span>
+                </div>
+                <div class="hero-proof-divider"></div>
+                <div class="hero-proof-item">
+                    <strong>2 semaines</strong>
+                    <span>pour être opérationnel</span>
+                </div>
+                <div class="hero-proof-divider"></div>
+                <div class="hero-proof-item">
+                    <strong>100% sécurisé</strong>
+                    <span>hébergé en France</span>
+                </div>
+            </div>
+        </div>
+        <!-- Hero visual -->
+        <div class="container">
+            <div class="hero-visual">
+                <div class="browser-mockup">
+                    <div class="browser-bar">
+                        <div class="browser-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="browser-address">app.clareo.fr/dashboard</div>
+                    </div>
+                    <div class="browser-content">
+                        <div class="dashboard-mock">
+                            <div class="dash-sidebar">
+                                <div class="dash-sidebar-item active">
+                                    <span class="dash-icon">&#9632;</span> Tableau de bord
+                                </div>
+                                <div class="dash-sidebar-item">
+                                    <span class="dash-icon">&#8644;</span> Trésorerie
+                                </div>
+                                <div class="dash-sidebar-item">
+                                    <span class="dash-icon">&#9776;</span> Budgets
+                                </div>
+                                <div class="dash-sidebar-item">
+                                    <span class="dash-icon">&#9823;</span> Équipe RH
+                                </div>
+                                <div class="dash-sidebar-item">
+                                    <span class="dash-icon">&#9881;</span> Banque
+                                </div>
+                            </div>
+                            <div class="dash-main">
+                                <div class="dash-header-row">
+                                    <h3>Vue d'ensemble</h3>
+                                    <span class="dash-date">Avril 2026</span>
+                                </div>
+                                <div class="dash-cards">
+                                    <div class="dash-card dash-card-blue">
+                                        <span class="dash-card-label">Trésorerie</span>
+                                        <span class="dash-card-value">&euro;47 230</span>
+                                        <span class="dash-card-trend up">+12%</span>
+                                    </div>
+                                    <div class="dash-card dash-card-green">
+                                        <span class="dash-card-label">Budget restant</span>
+                                        <span class="dash-card-value">&euro;18 900</span>
+                                        <span class="dash-card-trend up">67%</span>
+                                    </div>
+                                    <div class="dash-card dash-card-purple">
+                                        <span class="dash-card-label">Collaborateurs</span>
+                                        <span class="dash-card-value">12</span>
+                                        <span class="dash-card-trend neutral">stable</span>
+                                    </div>
+                                </div>
+                                <div class="dash-chart">
+                                    <div class="dash-chart-title">Flux de trésorerie</div>
+                                    <div class="dash-chart-bars">
+                                        <div class="dash-bar" style="height:60%"><span>Jan</span></div>
+                                        <div class="dash-bar" style="height:45%"><span>Fév</span></div>
+                                        <div class="dash-bar" style="height:70%"><span>Mar</span></div>
+                                        <div class="dash-bar" style="height:55%"><span>Avr</span></div>
+                                        <div class="dash-bar" style="height:80%"><span>Mai</span></div>
+                                        <div class="dash-bar" style="height:65%"><span>Jun</span></div>
+                                        <div class="dash-bar highlight" style="height:90%"><span>Jul</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Problem Section -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">&#128466;</div>
+                    <h3>Fichiers Excel partout</h3>
+                    <p>Des dizaines de fichiers, des versions qui se perdent, des formules qui cassent. Vous méritez mieux.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">&#128274;</div>
+                    <h3>Données éparpillées</h3>
+                    <p>Banque d'un côté, RH de l'autre, budgets ailleurs. Aucune vue globale de votre activité.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">&#9200;</div>
+                    <h3>Temps perdu</h3>
+                    <p>Des heures à ressaisir, copier-coller et consolider manuellement des données chaque semaine.</p>
+                </div>
+            </div>
+            <div class="problem-transition">
+                <div class="arrow-down">&#8595;</div>
+                <p class="problem-transition-text">Clareo résout tout ça en une seule plateforme</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Fonctionnalités</span>
+                <h2>Tout ce dont votre entreprise a besoin, <br>en une seule application</h2>
+                <p>Fini les outils éparpillés. Clareo centralise et digitalise vos processus métier.</p>
+            </div>
+            <div class="features-grid">
+                <a href="excel.html" class="feature-card feature-card-highlight feature-card-link">
+                    <div class="feature-icon-wrap blue">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    </div>
+                    <h3>Transformation Excel</h3>
+                    <p>Envoyez-nous vos fichiers Excel. On les transforme en applications web collaboratives avec interface moderne, filtres, graphiques et exports.</p>
+                    <ul class="feature-list">
+                        <li>Import direct de vos fichiers .xlsx</li>
+                        <li>Formules et logiques préservées</li>
+                        <li>Collaboration en temps réel</li>
+                        <li>Historique de modifications</li>
+                    </ul>
+                    <span class="feature-link">En savoir plus &rarr;</span>
+                </a>
+                <a href="banque.html" class="feature-card feature-card-link">
+                    <div class="feature-icon-wrap green">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4h-4z"/></svg>
+                    </div>
+                    <h3>Connexion bancaire</h3>
+                    <p>Connectez vos comptes bancaires en toute sécurité. Visualisez vos transactions, catégorisez automatiquement et rapprochez vos écritures.</p>
+                    <span class="feature-link">En savoir plus &rarr;</span>
+                </a>
+                <a href="tresorerie.html" class="feature-card feature-card-link">
+                    <div class="feature-icon-wrap indigo">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    </div>
+                    <h3>Suivi de trésorerie</h3>
+                    <p>Visualisez votre trésorerie en temps réel. Prévisions automatiques, alertes de seuil et scénarios de simulation pour anticiper l'avenir.</p>
+                    <span class="feature-link">En savoir plus &rarr;</span>
+                </a>
+                <a href="budget.html" class="feature-card feature-card-link">
+                    <div class="feature-icon-wrap orange">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>
+                    </div>
+                    <h3>Gestion de budgets</h3>
+                    <p>Créez et suivez vos budgets par projet, département ou période. Alertes automatiques quand un budget approche de sa limite.</p>
+                    <span class="feature-link">En savoir plus &rarr;</span>
+                </a>
+                <a href="rh.html" class="feature-card feature-card-link">
+                    <div class="feature-icon-wrap pink">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    </div>
+                    <h3>Gestion RH</h3>
+                    <p>Gérez vos collaborateurs : contrats, congés, absences, fiches de paie, entretiens annuels. Tout centralisé et accessible.</p>
+                    <span class="feature-link">En savoir plus &rarr;</span>
+                </a>
+                <div class="feature-card">
+                    <div class="feature-icon-wrap teal">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3>Sécurité &amp; conformité</h3>
+                    <p>Données hébergées en France, chiffrement de bout en bout, conformité RGPD. Vos données restent les vôtres.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Processus</span>
+                <h2>Opérationnel en 3 étapes</h2>
+                <p>Pas de projet IT complexe. On s'occupe de tout.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Audit gratuit</h3>
+                        <p>On analyse vos fichiers Excel, vos processus et vos besoins. On identifie ensemble ce qu'on peut transformer en priorité.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon-box">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Transformation</h3>
+                        <p>Notre équipe construit votre application sur-mesure. Vous validez à chaque étape. Pas de mauvaise surprise.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon-box">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Déploiement &amp; accompagnement</h3>
+                        <p>Votre application est en ligne. On forme vos équipes et on reste disponible pour tout ajustement.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-icon-box">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social proof / stats -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-value" data-target="95">0</div>
+                    <div class="stat-suffix">%</div>
+                    <div class="stat-label">de réduction du temps de saisie</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" data-target="2">0</div>
+                    <div class="stat-suffix"> sem.</div>
+                    <div class="stat-label">pour être opérationnel</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" data-target="0">0</div>
+                    <div class="stat-suffix"> ligne</div>
+                    <div class="stat-label">de code à écrire</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" data-target="100">0</div>
+                    <div class="stat-suffix">%</div>
+                    <div class="stat-label">hébergé en France</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Tarifs</span>
+                <h2>Des offres adaptées à votre taille</h2>
+                <p>Sans engagement. Évoluez à votre rythme.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-badge">TPE</div>
+                    <h3>Essentiel</h3>
+                    <p class="pricing-desc">Pour les petites structures qui veulent digitaliser leurs premiers processus.</p>
+                    <div class="pricing-price">
+                        <span class="price-amount price-contact">Nous consulter</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="check">&#10003;</span> Jusqu'à 3 applications</li>
+                        <li><span class="check">&#10003;</span> 5 utilisateurs</li>
+                        <li><span class="check">&#10003;</span> Connexion bancaire</li>
+                        <li><span class="check">&#10003;</span> Suivi de trésorerie</li>
+                        <li><span class="check">&#10003;</span> Support email</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline btn-block">Demander un devis</a>
+                </div>
+                <div class="pricing-card pricing-card-popular">
+                    <div class="pricing-popular-badge">Le plus populaire</div>
+                    <div class="pricing-badge">PME</div>
+                    <h3>Business</h3>
+                    <p class="pricing-desc">Pour les PME qui veulent centraliser toute leur gestion.</p>
+                    <div class="pricing-price">
+                        <span class="price-amount price-contact">Nous consulter</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="check">&#10003;</span> Applications illimitées</li>
+                        <li><span class="check">&#10003;</span> 25 utilisateurs</li>
+                        <li><span class="check">&#10003;</span> Tout de Essentiel</li>
+                        <li><span class="check">&#10003;</span> Gestion budgétaire</li>
+                        <li><span class="check">&#10003;</span> Module RH complet</li>
+                        <li><span class="check">&#10003;</span> Support prioritaire</li>
+                        <li><span class="check">&#10003;</span> Formation incluse</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary btn-block">Demander un devis</a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-badge">Sur-mesure</div>
+                    <h3>Enterprise</h3>
+                    <p class="pricing-desc">Pour les structures avec des besoins spécifiques ou réglementaires.</p>
+                    <div class="pricing-price">
+                        <span class="price-amount price-contact">Nous consulter</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="check">&#10003;</span> Tout de Business</li>
+                        <li><span class="check">&#10003;</span> Utilisateurs illimités</li>
+                        <li><span class="check">&#10003;</span> API &amp; intégrations</li>
+                        <li><span class="check">&#10003;</span> SLA garanti</li>
+                        <li><span class="check">&#10003;</span> Accompagnement dédié</li>
+                        <li><span class="check">&#10003;</span> Hébergement privé</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-outline btn-block">Nous contacter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">FAQ</span>
+                <h2>Questions fréquentes</h2>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Est-ce que mes fichiers Excel actuels sont compatibles ?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Oui, dans la grande majorité des cas. On prend en charge les fichiers .xlsx, .xls et .csv. Lors de l'audit gratuit, on analyse vos fichiers et on vous dit exactement ce qu'on peut transformer et comment.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Mes données sont-elles en sécurité ?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolument. Toutes vos données sont hébergées en France sur des serveurs certifiés. Chiffrement de bout en bout, sauvegardes quotidiennes, conformité RGPD. Vous restez propriétaire de vos données à 100%.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Combien de temps prend la mise en place ?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>En moyenne 2 semaines pour une première application. On travaille de manière itérative : vous avez une version fonctionnelle rapidement et on affine ensemble.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Faut-il des compétences techniques ?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Aucune. Si vous savez utiliser Excel, vous saurez utiliser Clareo. On s'occupe de toute la partie technique et on forme vos équipes à l'utilisation.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Puis-je connecter ma banque en toute sécurité ?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Oui. On utilise des connecteurs bancaires agréés par l'ACPR (Banque de France) via la DSP2. La connexion est sécurisée et en lecture seule — on ne peut jamais effectuer d'opérations sur votre compte.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Y a-t-il un engagement minimum ?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Non. Tous nos abonnements sont sans engagement. Vous pouvez arrêter à tout moment et récupérer l'intégralité de vos données.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Prêt à quitter Excel ?</h2>
+                <p>Réservez un audit gratuit de 30 minutes. On analyse vos fichiers et on vous montre ce que Clareo peut faire pour vous.</p>
+                <a href="#contact" class="btn btn-primary btn-lg">Réserver mon audit gratuit</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Contact</span>
+                <h2>Demandez votre démo gratuite</h2>
+                <p>Remplissez le formulaire et on vous recontacte sous 24h.</p>
+            </div>
+            <div class="contact-grid">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">Prénom</label>
+                            <input type="text" id="firstName" name="firstName" required placeholder="Jean">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Nom</label>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Dupont">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email professionnel</label>
+                        <input type="email" id="email" name="email" required placeholder="jean@monentreprise.fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Entreprise</label>
+                        <input type="text" id="company" name="company" required placeholder="Mon Entreprise SAS">
+                    </div>
+                    <div class="form-group">
+                        <label for="employees">Nombre de collaborateurs</label>
+                        <select id="employees" name="employees">
+                            <option value="">Sélectionnez</option>
+                            <option value="1-5">1 à 5</option>
+                            <option value="6-20">6 à 20</option>
+                            <option value="21-50">21 à 50</option>
+                            <option value="51-100">51 à 100</option>
+                            <option value="100+">Plus de 100</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="needs">Quels sont vos besoins principaux ?</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="needs" value="excel"> Transformation Excel
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="needs" value="bank"> Connexion bancaire
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="needs" value="treasury"> Trésorerie
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="needs" value="budget"> Suivi de budget
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="needs" value="hr"> Gestion RH
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message (optionnel)</label>
+                        <textarea id="message" name="message" rows="3" placeholder="Décrivez votre situation actuelle..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Envoyer ma demande</button>
+                    <p class="form-disclaimer">En soumettant ce formulaire, vous acceptez d'être recontacté par Clareo. Vos données ne seront jamais partagées.</p>
+                </form>
+                <div class="contact-info">
+                    <div class="contact-info-card">
+                        <h3>Pourquoi Clareo ?</h3>
+                        <div class="contact-benefit">
+                            <div class="contact-benefit-icon">&#10003;</div>
+                            <div>
+                                <strong>Audit gratuit et sans engagement</strong>
+                                <p>On analyse vos besoins et on vous propose une solution concrète.</p>
+                            </div>
+                        </div>
+                        <div class="contact-benefit">
+                            <div class="contact-benefit-icon">&#10003;</div>
+                            <div>
+                                <strong>Accompagnement de A à Z</strong>
+                                <p>De l'analyse à la formation, on est là à chaque étape.</p>
+                            </div>
+                        </div>
+                        <div class="contact-benefit">
+                            <div class="contact-benefit-icon">&#10003;</div>
+                            <div>
+                                <strong>Fait pour les TPE/PME</strong>
+                                <p>Des tarifs accessibles et une solution adaptée à votre taille.</p>
+                            </div>
+                        </div>
+                        <div class="contact-benefit">
+                            <div class="contact-benefit-icon">&#10003;</div>
+                            <div>
+                                <strong>100% français</strong>
+                                <p>Équipe française, hébergement français, support en français.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">&#9670;</span> Clareo
+                    </a>
+                    <p>Transformez vos outils du quotidien en applications web performantes.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Produit</h4>
+                    <a href="excel.html">Transformation Excel</a>
+                    <a href="banque.html">Connexion bancaire</a>
+                    <a href="tresorerie.html">Trésorerie</a>
+                    <a href="budget.html">Budgets</a>
+                    <a href="rh.html">Gestion RH</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Entreprise</h4>
+                    <a href="#contact">Contact</a>
+                    <a href="#">Mentions légales</a>
+                    <a href="#">Politique de confidentialité</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Ressources</h4>
+                    <a href="#">Blog</a>
+                    <a href="#">Cas clients</a>
+                    <a href="#">Documentation</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Clareo. Tous droits réservés. Hébergé en France.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-icon">&#10003;</div>
+            <h3>Demande envoyée !</h3>
+            <p>Merci pour votre intérêt. Notre équipe vous recontactera sous 24h pour planifier votre audit gratuit.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Fermer</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion bancaire — Clareo</title>
+    <meta name="description" content="Connectez vos comptes bancaires en toute sécurité. Visualisez vos transactions, catégorisez et rapprochez automatiquement.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><span class="logo-icon">&#9670;</span> Clareo</a>
+            <div class="nav-links" id="navLinks">
+                <div class="nav-dropdown">
+                    <a href="index.html#features" class="nav-dropdown-trigger">Fonctionnalités <span class="nav-arrow">&#9662;</span></a>
+                    <div class="nav-dropdown-menu">
+                        <a href="excel.html">Transformation Excel</a>
+                        <a href="banque.html" class="active">Connexion bancaire</a>
+                        <a href="tresorerie.html">Suivi de trésorerie</a>
+                        <a href="budget.html">Gestion de budgets</a>
+                        <a href="rh.html">Gestion RH</a>
+                    </div>
+                </div>
+                <a href="index.html#how-it-works">Comment ça marche</a>
+                <a href="index.html#pricing">Tarifs</a>
+                <a href="index.html#faq">FAQ</a>
+                <a href="index.html#contact" class="btn btn-nav">Demander une démo</a>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <header class="page-hero">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+        <div class="container">
+            <div class="page-hero-content">
+                <div class="page-hero-text">
+                    <span class="section-tag">Connexion bancaire</span>
+                    <h1>Vos comptes bancaires, <span class="gradient-text">en temps réel</span></h1>
+                    <p>Connectez vos banques en toute sécurité via la DSP2. Visualisez toutes vos transactions, catégorisez-les automatiquement et rapprochez vos écritures comptables sans effort.</p>
+                    <div class="hero-ctas">
+                        <a href="index.html#contact" class="btn btn-primary btn-lg">Demander une démo</a>
+                        <a href="#details" class="btn btn-outline btn-lg">En savoir plus</a>
+                    </div>
+                </div>
+                <div class="page-hero-visual">
+                    <div class="browser-mockup browser-mockup-sm">
+                        <div class="browser-bar">
+                            <div class="browser-dots"><span></span><span></span><span></span></div>
+                            <div class="browser-address">app.clareo.fr/banque</div>
+                        </div>
+                        <div class="browser-content">
+                            <div class="mock-bank">
+                                <div class="mock-bank-header">
+                                    <div class="mock-bank-account">
+                                        <span class="mock-bank-name">Compte courant pro</span>
+                                        <span class="mock-bank-balance">&euro;34 567,82</span>
+                                    </div>
+                                    <div class="mock-bank-account">
+                                        <span class="mock-bank-name">Compte épargne</span>
+                                        <span class="mock-bank-balance">&euro;12 800,00</span>
+                                    </div>
+                                </div>
+                                <div class="mock-bank-transactions">
+                                    <div class="mock-bank-tx">
+                                        <span class="mock-tx-cat green">&#9679;</span>
+                                        <span class="mock-tx-label">Virement client Dupont</span>
+                                        <span class="mock-tx-amount positive">+&euro;4 200</span>
+                                    </div>
+                                    <div class="mock-bank-tx">
+                                        <span class="mock-tx-cat orange">&#9679;</span>
+                                        <span class="mock-tx-label">Loyer bureau</span>
+                                        <span class="mock-tx-amount negative">-&euro;1 850</span>
+                                    </div>
+                                    <div class="mock-bank-tx">
+                                        <span class="mock-tx-cat blue">&#9679;</span>
+                                        <span class="mock-tx-label">Abonnement logiciel</span>
+                                        <span class="mock-tx-amount negative">-&euro;89</span>
+                                    </div>
+                                    <div class="mock-bank-tx">
+                                        <span class="mock-tx-cat green">&#9679;</span>
+                                        <span class="mock-tx-label">Virement client Moreau</span>
+                                        <span class="mock-tx-amount positive">+&euro;7 500</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Details -->
+    <section class="detail-features" id="details">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Fonctionnalités</span>
+                <h2>Votre banque, directement dans Clareo</h2>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-icon green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3>Connexion sécurisée DSP2</h3>
+                    <p>Connecteurs agréés par l'ACPR (Banque de France). Connexion en lecture seule — aucune opération ne peut être effectuée sur vos comptes.</p>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon blue">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </div>
+                    <h3>Synchronisation automatique</h3>
+                    <p>Vos transactions sont récupérées automatiquement chaque jour. Vous avez toujours une vue à jour de vos flux bancaires.</p>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    </div>
+                    <h3>Catégorisation intelligente</h3>
+                    <p>Les transactions sont automatiquement catégorisées (loyer, salaires, fournisseurs...). Vous pouvez ajuster et Clareo apprend de vos corrections.</p>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon indigo">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    </div>
+                    <h3>Rapprochement bancaire</h3>
+                    <p>Rapprochez automatiquement vos transactions bancaires avec vos factures et devis. Identifiez les écarts en un clin d'œil.</p>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                    </div>
+                    <h3>Multi-comptes et multi-banques</h3>
+                    <p>Connectez autant de comptes que nécessaire, dans différentes banques. Vue consolidée de l'ensemble de vos avoirs.</p>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon teal">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    </div>
+                    <h3>Alertes personnalisées</h3>
+                    <p>Recevez une notification quand un seuil est atteint, quand un prélèvement inhabituel est détecté ou quand un virement attendu arrive.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security highlight -->
+    <section class="highlight-section">
+        <div class="container">
+            <div class="highlight-box">
+                <div class="highlight-content">
+                    <h2>Sécurité bancaire de niveau professionnel</h2>
+                    <ul class="highlight-list">
+                        <li><span class="check">&#10003;</span> Connecteurs agréés ACPR / Banque de France</li>
+                        <li><span class="check">&#10003;</span> Connexion en lecture seule uniquement</li>
+                        <li><span class="check">&#10003;</span> Chiffrement AES-256 de bout en bout</li>
+                        <li><span class="check">&#10003;</span> Données hébergées en France</li>
+                        <li><span class="check">&#10003;</span> Conformité RGPD et DSP2</li>
+                        <li><span class="check">&#10003;</span> Authentification forte (2FA)</li>
+                    </ul>
+                </div>
+                <div class="highlight-visual">
+                    <div class="shield-icon">
+                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" stroke-width="1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <div class="shield-check">&#10003;</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Connectez votre banque en 5 minutes</h2>
+                <p>Sécurisé, en lecture seule, et compatible avec toutes les grandes banques françaises.</p>
+                <a href="index.html#contact" class="btn btn-primary btn-lg">Demander une démo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo"><span class="logo-icon">&#9670;</span> Clareo</a>
+                    <p>Transformez vos outils du quotidien en applications web performantes.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Produit</h4>
+                    <a href="excel.html">Transformation Excel</a>
+                    <a href="banque.html">Connexion bancaire</a>
+                    <a href="tresorerie.html">Trésorerie</a>
+                    <a href="budget.html">Budgets</a>
+                    <a href="rh.html">Gestion RH</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Entreprise</h4>
+                    <a href="index.html#contact">Contact</a>
+                    <a href="#">Mentions légales</a>
+                    <a href="#">Politique de confidentialité</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Ressources</h4>
+                    <a href="#">Blog</a>
+                    <a href="#">Cas clients</a>
+                    <a href="#">Documentation</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Clareo. Tous droits réservés. Hébergé en France.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
