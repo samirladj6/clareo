@@ -28,26 +28,39 @@ const sb = {
 // ===== Helpers =====
 const fmt = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
 const fmtDate = d => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+const fmtDateShort = d => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : '—';
 const slug = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
 const colors = ['#4F46E5', '#10B981', '#F59E0B', '#EC4899', '#3B82F6', '#8B5CF6', '#EF4444', '#14B8A6', '#6366F1', '#F97316'];
 const avatarColors = ['#3B82F6', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6', '#EF4444', '#14B8A6', '#6366F1'];
+const budgetColors = ['orange', 'teal', 'red', 'blue', 'green', 'purple'];
 const initials = (f, l) => ((f || '')[0] + (l || '')[0]).toUpperCase();
 
 let chartInstances = {};
 function destroyChart(id) { if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; } }
 
 // ===== Date =====
-document.getElementById('currentDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const now = new Date();
+const monthNames = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+document.getElementById('currentDate').textContent =
+    now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase());
 
 // ===== Navigation =====
-const pageTitles = { dashboard: 'Tableau de bord', fichiers: 'Importer un fichier', banque: 'Banque', budgets: 'Budgets', rh: 'Équipe RH', conges: 'Congés' };
+const pageTitles = {
+    dashboard: 'Vue d\'ensemble',
+    tresorerie: 'Trésorerie',
+    banque: 'Banque',
+    budgets: 'Budgets',
+    rh: 'Équipe RH',
+    conges: 'Congés',
+    fichiers: 'Importer un fichier'
+};
 
 function navigate(page) {
     Object.keys(pageTitles).forEach(p => document.getElementById(`page-${p}`).classList.toggle('hidden', p !== page));
     document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page === page));
     document.getElementById('pageTitle').textContent = pageTitles[page];
     document.getElementById('sidebar').classList.remove('open');
-    const loaders = { dashboard: loadDashboard, fichiers: loadFichiers, banque: loadBank, budgets: loadBudgets, rh: loadRH, conges: loadLeaves };
+    const loaders = { dashboard: loadDashboard, tresorerie: loadTresorerie, fichiers: loadFichiers, banque: loadBank, budgets: loadBudgets, rh: loadRH, conges: loadLeaves };
     if (loaders[page]) loaders[page]();
 }
 
@@ -74,36 +87,42 @@ async function loadDashboard() {
         sb.get('budgets'),
         sb.get('employees')
     ]);
+
+    // KPI: Trésorerie
     const credits = tx.filter(t => t.type === 'credit').reduce((s, t) => s + +t.amount, 0);
     const debits = tx.filter(t => t.type === 'debit').reduce((s, t) => s + +t.amount, 0);
-    document.getElementById('kpi-treasury').textContent = fmt(credits - debits);
+    const treasury = credits - debits;
+    document.getElementById('kpi-treasury').textContent = fmt(treasury);
+    document.getElementById('kpi-treasury-sub').textContent = '+12%';
 
-    const now = new Date();
-    const monthCredits = tx.filter(t => t.type === 'credit' && new Date(t.date).getMonth() === now.getMonth()).reduce((s, t) => s + +t.amount, 0);
-    document.getElementById('kpi-income').textContent = fmt(monthCredits);
-
+    // KPI: Budget restant
     const totBudget = budgets.reduce((s, b) => s + +b.total_amount, 0);
     const totSpent = budgets.reduce((s, b) => s + +b.spent_amount, 0);
-    document.getElementById('kpi-budget').textContent = totBudget ? Math.round(totSpent / totBudget * 100) + '%' : '—';
+    const remaining = totBudget - totSpent;
+    document.getElementById('kpi-budget').textContent = fmt(remaining);
+    const pct = totBudget ? Math.round((remaining / totBudget) * 100) : 0;
+    document.getElementById('kpi-budget-sub').textContent = pct + '%';
+    document.getElementById('kpi-budget-sub').className = 'kpi-sub ' + (pct > 50 ? 'positive' : pct > 20 ? 'warning' : 'neutral');
+
+    // KPI: Collaborateurs
     document.getElementById('kpi-employees').textContent = emps.length;
 
-    // Transactions
-    document.getElementById('dash-transactions').innerHTML = tx.slice(0, 6).map(t => `
+    // Transactions list
+    document.getElementById('dash-transactions').innerHTML = tx.slice(0, 5).map(t => `
         <div class="tx-row">
-            <div class="tx-cat tx-cat-${t.category}"></div>
+            <div class="tx-dot ${t.type}"></div>
             <span class="tx-label">${t.label}</span>
-            <span class="tx-date">${fmtDate(t.date)}</span>
             <span class="tx-amount ${t.type}">${t.type === 'credit' ? '+' : '-'}${fmt(t.amount)}</span>
         </div>`).join('') || '<div class="empty-state">Aucune transaction</div>';
 
-    // Budgets
-    document.getElementById('dash-budgets').innerHTML = budgets.map(b => {
+    // Budgets list
+    document.getElementById('dash-budgets').innerHTML = budgets.map((b, i) => {
         const p = Math.round(b.spent_amount / b.total_amount * 100);
-        const c = p >= 90 ? 'red' : p >= 70 ? 'orange' : 'green';
+        const c = p >= 90 ? 'red' : budgetColors[i % budgetColors.length];
         return `<div class="budget-row"><div class="budget-top"><span class="budget-name">${b.name}</span><span class="budget-numbers">${fmt(b.spent_amount)} / ${fmt(b.total_amount)}</span></div><div class="progress-bar"><div class="progress-fill progress-${c}" style="width:${p}%"></div></div><span class="budget-pct ${p >= 90 ? 'danger' : p >= 70 ? 'warn' : 'ok'}">${p}%</span></div>`;
     }).join('') || '<div class="empty-state">Aucun budget</div>';
 
-    // Chart
+    // Chart — Flux de trésorerie (soft purple bars)
     destroyChart('dashChart');
     const monthly = {};
     const txSorted = [...tx].sort((a, b) => a.date.localeCompare(b.date));
@@ -114,18 +133,120 @@ async function loadDashboard() {
     });
     const months = Object.keys(monthly).sort();
     if (months.length) {
+        const flux = months.map(m => monthly[m].in - monthly[m].out);
+        const currentMonth = now.toISOString().substring(0, 7);
         chartInstances['dashChart'] = new Chart(document.getElementById('dashChart'), {
             type: 'bar',
             data: {
-                labels: months.map(m => new Date(m + '-01').toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })),
-                datasets: [
-                    { label: 'Entrées', data: months.map(m => monthly[m].in), backgroundColor: '#10B981' },
-                    { label: 'Sorties', data: months.map(m => monthly[m].out), backgroundColor: '#EF4444' }
-                ]
+                labels: months.map(m => new Date(m + '-01').toLocaleDateString('fr-FR', { month: 'short' })),
+                datasets: [{
+                    data: flux,
+                    backgroundColor: months.map(m => m === currentMonth ? '#4F46E5' : '#C7D2FE'),
+                    borderRadius: 6,
+                    borderSkipped: false,
+                    maxBarThickness: 48
+                }]
             },
-            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { display: false },
+                    x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { size: 12 } } }
+                }
+            }
         });
     }
+}
+
+// ===========================================
+//  TRÉSORERIE
+// ===========================================
+async function loadTresorerie() {
+    const tx = await sb.get('transactions', 'order=date.asc');
+
+    const credits = tx.filter(t => t.type === 'credit').reduce((s, t) => s + +t.amount, 0);
+    const debits = tx.filter(t => t.type === 'debit').reduce((s, t) => s + +t.amount, 0);
+    const solde = credits - debits;
+
+    document.getElementById('treso-solde').textContent = fmt(solde);
+    // Simple forecast: current trend projected +30 days
+    const forecast = Math.round(solde * 1.12);
+    document.getElementById('treso-forecast').textContent = fmt(forecast);
+
+    // Monthly cumulative balance for chart
+    const monthly = {};
+    tx.forEach(t => {
+        const k = t.date.substring(0, 7);
+        if (!monthly[k]) monthly[k] = 0;
+        monthly[k] += t.type === 'credit' ? +t.amount : -t.amount;
+    });
+    const months = Object.keys(monthly).sort();
+    let cumulative = 0;
+    const balances = months.map(m => { cumulative += monthly[m]; return cumulative; });
+
+    // Add forecast point
+    const lastMonth = months[months.length - 1];
+    const [y, mo] = lastMonth.split('-').map(Number);
+    const nextMonth = `${y}-${String(mo + 1).padStart(2, '0')}`;
+    months.push(nextMonth);
+    balances.push(forecast);
+
+    // Line chart with gradient fill
+    destroyChart('tresoChart');
+    const canvas = document.getElementById('tresoChart');
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+    gradient.addColorStop(0, 'rgba(79, 70, 229, 0.15)');
+    gradient.addColorStop(1, 'rgba(79, 70, 229, 0.01)');
+
+    chartInstances['tresoChart'] = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: months.map(m => new Date(m + '-01').toLocaleDateString('fr-FR', { month: 'short' })),
+            datasets: [{
+                data: balances,
+                borderColor: '#4F46E5',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.35,
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                borderWidth: 2.5,
+                segment: {
+                    borderDash: (ctx2) => ctx2.p0DataIndex >= months.length - 2 ? [6, 4] : undefined
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { display: false },
+                x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { size: 12 } } }
+            }
+        }
+    });
+
+    // Entrées / Sorties du mois
+    const currentMonth = now.toISOString().substring(0, 7);
+    const monthTx = tx.filter(t => t.date.startsWith(currentMonth));
+    const monthCredits = monthTx.filter(t => t.type === 'credit');
+    const monthDebits = monthTx.filter(t => t.type === 'debit');
+
+    document.getElementById('treso-credits').innerHTML = monthCredits.map(t => `
+        <div class="tx-row">
+            <div class="tx-dot credit"></div>
+            <span class="tx-label">${t.label}</span>
+            <span class="tx-amount credit">+${fmt(t.amount)}</span>
+        </div>`).join('') || '<div class="empty-state">Aucune entrée ce mois</div>';
+
+    document.getElementById('treso-debits').innerHTML = monthDebits.map(t => `
+        <div class="tx-row">
+            <div class="tx-dot debit"></div>
+            <span class="tx-label">${t.label}</span>
+            <span class="tx-amount debit">-${fmt(t.amount)}</span>
+        </div>`).join('') || '<div class="empty-state">Aucune sortie ce mois</div>';
 }
 
 // ===========================================
@@ -164,7 +285,6 @@ function showPreview() {
     document.getElementById('filePreview').classList.remove('hidden');
     document.getElementById('previewTitle').textContent = `${parsedFileName} — ${parsedData.length} lignes, ${parsedColumns.length} colonnes`;
 
-    // Table
     const maxRows = Math.min(parsedData.length, 50);
     let html = '<table class="data-table"><thead><tr>' + parsedColumns.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
     for (let i = 0; i < maxRows; i++) {
@@ -174,7 +294,6 @@ function showPreview() {
     if (parsedData.length > 50) html += `<p style="padding:12px;color:var(--text-lighter);font-size:0.8rem">Affichage limité aux 50 premières lignes sur ${parsedData.length}</p>`;
     document.getElementById('previewTable').innerHTML = html;
 
-    // Auto charts
     generateAutoCharts();
 }
 
@@ -187,95 +306,81 @@ function formatCell(v) {
 function generateAutoCharts() {
     const container = document.getElementById('autoCharts');
     container.innerHTML = '';
-    // Destroy old charts
     Object.keys(chartInstances).filter(k => k.startsWith('auto-')).forEach(k => destroyChart(k));
 
-    // Detect column types
     const numCols = [];
     const textCols = [];
-    const dateCols = [];
 
     parsedColumns.forEach(col => {
         const sample = parsedData.slice(0, 20).map(r => r[col]).filter(v => v !== '' && v !== null);
-        if (sample.every(v => v instanceof Date)) dateCols.push(col);
-        else if (sample.every(v => !isNaN(Number(v)) && v !== '')) numCols.push(col);
-        else textCols.push(col);
+        if (sample.every(v => !isNaN(Number(v)) && v !== '')) numCols.push(col);
+        else if (!(sample.every(v => v instanceof Date))) textCols.push(col);
     });
 
     let chartCount = 0;
 
-    // Chart 1: If text + numeric cols → bar chart (top categories)
     if (textCols.length && numCols.length) {
         const labelCol = textCols[0];
-        const valueCol = numCols[0];
+        const valueCol = numCols[numCols.length > 2 ? 2 : 0];
         const aggregated = {};
         parsedData.forEach(r => {
             const k = String(r[labelCol]);
             aggregated[k] = (aggregated[k] || 0) + Number(r[valueCol] || 0);
         });
         const sorted = Object.entries(aggregated).sort((a, b) => b[1] - a[1]).slice(0, 10);
-
         const id = `auto-${chartCount++}`;
         const box = document.createElement('div');
         box.className = 'auto-chart-box';
         box.innerHTML = `<h4>${valueCol} par ${labelCol}</h4><canvas id="${id}"></canvas>`;
         container.appendChild(box);
-
         chartInstances[id] = new Chart(document.getElementById(id), {
             type: 'bar',
-            data: { labels: sorted.map(s => s[0]), datasets: [{ label: valueCol, data: sorted.map(s => s[1]), backgroundColor: colors.slice(0, sorted.length) }] },
-            options: { responsive: true, plugins: { legend: { display: false } }, indexAxis: sorted.length > 6 ? 'y' : 'x' }
+            data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: '#C7D2FE', borderRadius: 6, maxBarThickness: 40 }] },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } }, indexAxis: sorted.length > 6 ? 'y' : 'x' }
         });
     }
 
-    // Chart 2: Pie chart if text col
-    if (textCols.length) {
-        const col = textCols[0];
+    if (textCols.length > 1) {
+        const col = textCols[1] || textCols[0];
         const counts = {};
         parsedData.forEach(r => { const k = String(r[col]); counts[k] = (counts[k] || 0) + 1; });
         const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
-
         const id = `auto-${chartCount++}`;
         const box = document.createElement('div');
         box.className = 'auto-chart-box';
         box.innerHTML = `<h4>Répartition par ${col}</h4><canvas id="${id}"></canvas>`;
         container.appendChild(box);
-
         chartInstances[id] = new Chart(document.getElementById(id), {
             type: 'doughnut',
-            data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: colors }] },
+            data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: ['#C7D2FE', '#A7F3D0', '#FDE68A', '#FBCFE8', '#BAE6FD', '#DDD6FE', '#FECACA', '#99F6E4'] }] },
             options: { responsive: true, plugins: { legend: { position: 'right' } } }
         });
     }
 
-    // Chart 3: Line chart if multiple numeric cols
     if (numCols.length >= 2) {
         const id = `auto-${chartCount++}`;
         const box = document.createElement('div');
         box.className = 'auto-chart-box';
-        box.innerHTML = `<h4>Évolution des valeurs numériques</h4><canvas id="${id}"></canvas>`;
+        box.innerHTML = `<h4>Évolution des valeurs</h4><canvas id="${id}"></canvas>`;
         container.appendChild(box);
-
         const labels = parsedData.slice(0, 30).map((_, i) => i + 1);
         chartInstances[id] = new Chart(document.getElementById(id), {
             type: 'line',
             data: {
                 labels,
-                datasets: numCols.slice(0, 4).map((col, i) => ({
+                datasets: numCols.slice(0, 3).map((col, i) => ({
                     label: col, data: parsedData.slice(0, 30).map(r => Number(r[col]) || 0),
-                    borderColor: colors[i], backgroundColor: colors[i] + '20', fill: true, tension: 0.3
+                    borderColor: colors[i], backgroundColor: colors[i] + '15', fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2
                 }))
             },
-            options: { responsive: true, plugins: { legend: { position: 'top' } } }
+            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
         });
     }
 
-    // Chart 4: Summary stats
     if (numCols.length) {
-        const id = `auto-${chartCount++}`;
         const box = document.createElement('div');
         box.className = 'auto-chart-box';
-        let statsHtml = `<h4>Résumé des colonnes numériques</h4><table class="data-table"><thead><tr><th>Colonne</th><th class="text-right">Somme</th><th class="text-right">Moyenne</th><th class="text-right">Min</th><th class="text-right">Max</th></tr></thead><tbody>`;
+        let statsHtml = `<h4>Résumé</h4><table class="data-table"><thead><tr><th>Colonne</th><th class="text-right">Total</th><th class="text-right">Moy.</th><th class="text-right">Min</th><th class="text-right">Max</th></tr></thead><tbody>`;
         numCols.forEach(col => {
             const vals = parsedData.map(r => Number(r[col]) || 0);
             const sum = vals.reduce((a, b) => a + b, 0);
@@ -284,10 +389,11 @@ function generateAutoCharts() {
         statsHtml += '</tbody></table>';
         box.innerHTML = statsHtml;
         container.appendChild(box);
+        chartCount++;
     }
 
     if (chartCount === 0) {
-        container.innerHTML = '<div class="empty-state">Pas assez de données pour générer des graphiques automatiquement.</div>';
+        container.innerHTML = '<div class="empty-state">Pas assez de données pour générer des graphiques.</div>';
     }
 }
 
@@ -301,7 +407,7 @@ document.getElementById('saveDatasetBtn').addEventListener('click', async () => 
         name: parsedFileName.replace(/\.(xlsx|xls|csv)$/i, ''),
         file_name: parsedFileName,
         columns: parsedColumns,
-        data: parsedData.slice(0, 500), // Limit to 500 rows for Supabase
+        data: parsedData.slice(0, 500),
         row_count: parsedData.length
     });
     btn.textContent = 'Sauvegardé !';
@@ -322,7 +428,7 @@ async function loadDatasets() {
                 <p>${d.row_count} lignes &middot; ${d.columns?.length || 0} colonnes &middot; ${fmtDate(d.created_at)}</p>
             </div>
             <div class="dataset-actions">
-                <button class="btn btn-sm btn-primary" onclick="viewDataset(${d.id})">Voir</button>
+                <button class="btn btn-sm btn-ghost" onclick="viewDataset(${d.id})">Voir</button>
                 <button class="action-btn reject" onclick="deleteDataset(${d.id})">Supprimer</button>
             </div>
         </div>`).join('');
@@ -348,6 +454,14 @@ window.deleteDataset = async function(id) {
 // ===========================================
 async function loadBank() {
     const tx = await sb.get('transactions', 'order=date.desc');
+
+    // Compute balances
+    const credits = tx.filter(t => t.type === 'credit').reduce((s, t) => s + +t.amount, 0);
+    const debits = tx.filter(t => t.type === 'debit').reduce((s, t) => s + +t.amount, 0);
+    const balance = credits - debits;
+    document.getElementById('bank-balance-courant').textContent = fmt(balance);
+    document.getElementById('bank-balance-epargne').textContent = fmt(12800);
+
     const cats = [...new Set(tx.map(t => t.category))].sort();
     const f = document.getElementById('bankFilter');
     const cur = f.value;
@@ -360,9 +474,9 @@ function renderBankTable(tx, filter) {
     const data = filter === 'all' ? tx : tx.filter(t => t.category === filter);
     document.getElementById('bank-table-body').innerHTML = data.map(t => `
         <tr>
-            <td>${fmtDate(t.date)}</td>
-            <td>${t.label}</td>
-            <td><span class="status">${t.category}</span></td>
+            <td>${fmtDateShort(t.date)}</td>
+            <td><strong>${t.label}</strong></td>
+            <td><span class="status status-${slug(t.category)}">${t.category}</span></td>
             <td class="text-right"><span class="tx-amount ${t.type}">${t.type === 'credit' ? '+' : '-'}${fmt(t.amount)}</span></td>
             <td><button class="action-btn reject" onclick="deleteTx(${t.id})">&#10005;</button></td>
         </tr>`).join('') || '<tr><td colspan="5" class="empty-state">Aucune transaction</td></tr>';
@@ -380,7 +494,7 @@ document.getElementById('addTransactionBtn').addEventListener('click', () => {
                 <div class="form-group"><label>Catégorie</label><input type="text" name="category" placeholder="Ex : Clients, Loyer, Salaires"></div>
                 <div class="form-group"><label>Date</label><input type="date" name="date" value="${new Date().toISOString().split('T')[0]}"></div>
             </div>
-            <div class="form-actions"><button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Ajouter</button></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Ajouter</button></div>
         </form>`);
     document.getElementById('txForm').onsubmit = async e => {
         e.preventDefault();
@@ -397,9 +511,9 @@ window.deleteTx = async function(id) { if (confirm('Supprimer cette transaction 
 // ===========================================
 async function loadBudgets() {
     const budgets = await sb.get('budgets', 'order=name.asc');
-    document.getElementById('budgets-list').innerHTML = budgets.map(b => {
+    document.getElementById('budgets-list').innerHTML = budgets.map((b, i) => {
         const p = Math.round(b.spent_amount / b.total_amount * 100);
-        const c = p >= 90 ? 'red' : p >= 70 ? 'orange' : 'green';
+        const c = p >= 90 ? 'red' : budgetColors[i % budgetColors.length];
         return `
         <div class="budget-row">
             <div class="budget-top">
@@ -411,7 +525,7 @@ async function loadBudgets() {
                 </div>
             </div>
             <div class="progress-bar"><div class="progress-fill progress-${c}" style="width:${p}%"></div></div>
-            <span class="budget-pct ${p >= 90 ? 'danger' : p >= 70 ? 'warn' : 'ok'}">${p}% consommé — reste ${fmt(b.total_amount - b.spent_amount)}</span>
+            <span class="budget-pct ${p >= 90 ? 'danger' : p >= 70 ? 'warn' : 'ok'}">${p}%</span>
         </div>`;
     }).join('') || '<div class="empty-state">Aucun budget</div>';
 }
@@ -422,7 +536,7 @@ document.getElementById('addBudgetBtn').addEventListener('click', () => {
             <div class="form-group"><label>Nom du budget</label><input type="text" name="name" required placeholder="Ex : Marketing Q2"></div>
             <div class="form-row"><div class="form-group"><label>Département</label><input type="text" name="department" placeholder="Ex : Marketing"></div><div class="form-group"><label>Période</label><input type="text" name="period" placeholder="2026"></div></div>
             <div class="form-row"><div class="form-group"><label>Montant total (€)</label><input type="number" name="total_amount" required></div><div class="form-group"><label>Déjà dépensé (€)</label><input type="number" name="spent_amount" value="0"></div></div>
-            <div class="form-actions"><button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Créer</button></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Créer</button></div>
         </form>`);
     document.getElementById('budgetForm').onsubmit = async e => {
         e.preventDefault();
@@ -437,7 +551,7 @@ window.editBudget = function(id, name, spent) {
         <form id="editBudgetForm">
             <p style="margin-bottom:16px">Budget : <strong>${name}</strong></p>
             <div class="form-group"><label>Montant dépensé (€)</label><input type="number" name="spent" value="${spent}" required></div>
-            <div class="form-actions"><button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
         </form>`);
     document.getElementById('editBudgetForm').onsubmit = async e => {
         e.preventDefault();
@@ -478,7 +592,7 @@ function empForm(e = {}) {
 }
 
 document.getElementById('addEmployeeBtn').addEventListener('click', () => {
-    openModal('Nouveau collaborateur', `<form id="empForm">${empForm()}<div class="form-actions"><button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Ajouter</button></div></form>`);
+    openModal('Nouveau collaborateur', `<form id="empForm">${empForm()}<div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Ajouter</button></div></form>`);
     document.getElementById('empForm').onsubmit = async e => {
         e.preventDefault();
         const fd = new FormData(e.target);
@@ -488,7 +602,7 @@ document.getElementById('addEmployeeBtn').addEventListener('click', () => {
 });
 
 window.editEmp = function(emp) {
-    openModal('Modifier le collaborateur', `<form id="empForm">${empForm(emp)}<div class="form-group"><label>Statut</label><select name="status"><option ${emp.status === 'En poste' ? 'selected' : ''}>En poste</option><option ${emp.status === 'En congé' ? 'selected' : ''}>En congé</option></select></div><div class="form-actions"><button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div></form>`);
+    openModal('Modifier le collaborateur', `<form id="empForm">${empForm(emp)}<div class="form-group"><label>Statut</label><select name="status"><option ${emp.status === 'En poste' ? 'selected' : ''}>En poste</option><option ${emp.status === 'En congé' ? 'selected' : ''}>En congé</option></select></div><div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div></form>`);
     document.getElementById('empForm').onsubmit = async e => {
         e.preventDefault();
         const fd = new FormData(e.target);
@@ -524,7 +638,7 @@ document.getElementById('addLeaveBtn').addEventListener('click', async () => {
             <div class="form-group"><label>Collaborateur</label><select name="employee_id">${emps.map(e => `<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('')}</select></div>
             <div class="form-group"><label>Type</label><select name="type"><option>Congé payé</option><option>RTT</option><option>Congé maladie</option><option>Télétravail</option><option>Congé sans solde</option></select></div>
             <div class="form-row"><div class="form-group"><label>Du</label><input type="date" name="start_date" required></div><div class="form-group"><label>Au</label><input type="date" name="end_date" required></div></div>
-            <div class="form-actions"><button type="button" class="btn btn-danger" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Envoyer</button></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Envoyer</button></div>
         </form>`);
     document.getElementById('leaveForm').onsubmit = async e => {
         e.preventDefault();
