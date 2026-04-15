@@ -213,23 +213,39 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Step 2: Preview + Mapping -->
                     <div id="filePreview" class="hidden">
                         <div class="card">
                             <div class="card-header">
                                 <h3 id="previewTitle">Aperçu</h3>
-                                <div class="card-actions">
-                                    <button class="btn btn-sm btn-primary" id="saveDatasetBtn">Sauvegarder dans Clareo</button>
-                                </div>
                             </div>
                             <div class="card-body table-scroll" id="previewTable"></div>
                         </div>
+
+                        <!-- Import mapping -->
                         <div class="card">
-                            <div class="card-header"><h3>Dashboard auto-généré</h3></div>
+                            <div class="card-header"><h3>Importer dans Clareo</h3></div>
                             <div class="card-body">
-                                <div class="auto-charts" id="autoCharts"></div>
+                                <div class="form-group">
+                                    <label>Type de données</label>
+                                    <select id="importType" class="filter-select" style="width:100%;padding:10px 14px;font-size:0.88rem;border-radius:10px">
+                                        <option value="">— Choisir le type —</option>
+                                        <option value="transactions">Transactions bancaires</option>
+                                        <option value="employees">Collaborateurs (RH)</option>
+                                        <option value="budgets">Budgets</option>
+                                    </select>
+                                </div>
+                                <div id="mappingFields" class="hidden" style="margin-top:16px"></div>
+                                <div id="importActions" class="hidden" style="margin-top:20px">
+                                    <div id="importStatus" style="margin-bottom:12px"></div>
+                                    <button class="btn btn-primary" id="doImportBtn" style="width:100%;padding:12px">Importer les données</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Historique -->
                     <div class="card" style="margin-top:4px">
                         <div class="card-header"><h3>Fichiers importés</h3></div>
                         <div class="card-body" id="datasetsList"><div class="loading">Chargement...</div></div>

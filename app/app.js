@@ -281,138 +281,304 @@ function handleFile(file) {
     reader.readAsArrayBuffer(file);
 }
 
-function showPreview() {
-    document.getElementById('filePreview').classList.remove('hidden');
-    document.getElementById('previewTitle').textContent = `${parsedFileName} — ${parsedData.length} lignes, ${parsedColumns.length} colonnes`;
-
-    const maxRows = Math.min(parsedData.length, 50);
-    let html = '<table class="data-table"><thead><tr>' + parsedColumns.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
-    for (let i = 0; i < maxRows; i++) {
-        html += '<tr>' + parsedColumns.map(c => `<td>${formatCell(parsedData[i][c])}</td>`).join('') + '</tr>';
-    }
-    html += '</tbody></table>';
-    if (parsedData.length > 50) html += `<p style="padding:12px;color:var(--text-lighter);font-size:0.8rem">Affichage limité aux 50 premières lignes sur ${parsedData.length}</p>`;
-    document.getElementById('previewTable').innerHTML = html;
-
-    generateAutoCharts();
-}
-
 function formatCell(v) {
     if (v instanceof Date) return v.toLocaleDateString('fr-FR');
     if (v === null || v === undefined) return '';
     return String(v);
 }
 
-function generateAutoCharts() {
-    const container = document.getElementById('autoCharts');
-    container.innerHTML = '';
-    Object.keys(chartInstances).filter(k => k.startsWith('auto-')).forEach(k => destroyChart(k));
+function showPreview() {
+    document.getElementById('filePreview').classList.remove('hidden');
+    document.getElementById('previewTitle').textContent = `${parsedFileName} — ${parsedData.length} lignes, ${parsedColumns.length} colonnes`;
 
-    const numCols = [];
-    const textCols = [];
-
-    parsedColumns.forEach(col => {
-        const sample = parsedData.slice(0, 20).map(r => r[col]).filter(v => v !== '' && v !== null);
-        if (sample.every(v => !isNaN(Number(v)) && v !== '')) numCols.push(col);
-        else if (!(sample.every(v => v instanceof Date))) textCols.push(col);
-    });
-
-    let chartCount = 0;
-
-    if (textCols.length && numCols.length) {
-        const labelCol = textCols[0];
-        const valueCol = numCols[numCols.length > 2 ? 2 : 0];
-        const aggregated = {};
-        parsedData.forEach(r => {
-            const k = String(r[labelCol]);
-            aggregated[k] = (aggregated[k] || 0) + Number(r[valueCol] || 0);
-        });
-        const sorted = Object.entries(aggregated).sort((a, b) => b[1] - a[1]).slice(0, 10);
-        const id = `auto-${chartCount++}`;
-        const box = document.createElement('div');
-        box.className = 'auto-chart-box';
-        box.innerHTML = `<h4>${valueCol} par ${labelCol}</h4><canvas id="${id}"></canvas>`;
-        container.appendChild(box);
-        chartInstances[id] = new Chart(document.getElementById(id), {
-            type: 'bar',
-            data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: '#C7D2FE', borderRadius: 6, maxBarThickness: 40 }] },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } }, indexAxis: sorted.length > 6 ? 'y' : 'x' }
-        });
+    // Table preview
+    const maxRows = Math.min(parsedData.length, 20);
+    let html = '<table class="data-table"><thead><tr>' + parsedColumns.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+    for (let i = 0; i < maxRows; i++) {
+        html += '<tr>' + parsedColumns.map(c => `<td>${formatCell(parsedData[i][c])}</td>`).join('') + '</tr>';
     }
+    html += '</tbody></table>';
+    if (parsedData.length > 20) html += `<p style="padding:12px;color:var(--text-lighter);font-size:0.8rem">Aperçu des 20 premières lignes sur ${parsedData.length}</p>`;
+    document.getElementById('previewTable').innerHTML = html;
 
-    if (textCols.length > 1) {
-        const col = textCols[1] || textCols[0];
-        const counts = {};
-        parsedData.forEach(r => { const k = String(r[col]); counts[k] = (counts[k] || 0) + 1; });
-        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
-        const id = `auto-${chartCount++}`;
-        const box = document.createElement('div');
-        box.className = 'auto-chart-box';
-        box.innerHTML = `<h4>Répartition par ${col}</h4><canvas id="${id}"></canvas>`;
-        container.appendChild(box);
-        chartInstances[id] = new Chart(document.getElementById(id), {
-            type: 'doughnut',
-            data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]), backgroundColor: ['#C7D2FE', '#A7F3D0', '#FDE68A', '#FBCFE8', '#BAE6FD', '#DDD6FE', '#FECACA', '#99F6E4'] }] },
-            options: { responsive: true, plugins: { legend: { position: 'right' } } }
-        });
-    }
+    // Reset mapping
+    document.getElementById('importType').value = '';
+    document.getElementById('mappingFields').classList.add('hidden');
+    document.getElementById('importActions').classList.add('hidden');
+    document.getElementById('importStatus').innerHTML = '';
 
-    if (numCols.length >= 2) {
-        const id = `auto-${chartCount++}`;
-        const box = document.createElement('div');
-        box.className = 'auto-chart-box';
-        box.innerHTML = `<h4>Évolution des valeurs</h4><canvas id="${id}"></canvas>`;
-        container.appendChild(box);
-        const labels = parsedData.slice(0, 30).map((_, i) => i + 1);
-        chartInstances[id] = new Chart(document.getElementById(id), {
-            type: 'line',
-            data: {
-                labels,
-                datasets: numCols.slice(0, 3).map((col, i) => ({
-                    label: col, data: parsedData.slice(0, 30).map(r => Number(r[col]) || 0),
-                    borderColor: colors[i], backgroundColor: colors[i] + '15', fill: true, tension: 0.35, pointRadius: 0, borderWidth: 2
-                }))
-            },
-            options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
-        });
-    }
-
-    if (numCols.length) {
-        const box = document.createElement('div');
-        box.className = 'auto-chart-box';
-        let statsHtml = `<h4>Résumé</h4><table class="data-table"><thead><tr><th>Colonne</th><th class="text-right">Total</th><th class="text-right">Moy.</th><th class="text-right">Min</th><th class="text-right">Max</th></tr></thead><tbody>`;
-        numCols.forEach(col => {
-            const vals = parsedData.map(r => Number(r[col]) || 0);
-            const sum = vals.reduce((a, b) => a + b, 0);
-            statsHtml += `<tr><td><strong>${col}</strong></td><td class="text-right">${sum.toLocaleString('fr-FR')}</td><td class="text-right">${(sum / vals.length).toLocaleString('fr-FR', { maximumFractionDigits: 1 })}</td><td class="text-right">${Math.min(...vals).toLocaleString('fr-FR')}</td><td class="text-right">${Math.max(...vals).toLocaleString('fr-FR')}</td></tr>`;
-        });
-        statsHtml += '</tbody></table>';
-        box.innerHTML = statsHtml;
-        container.appendChild(box);
-        chartCount++;
-    }
-
-    if (chartCount === 0) {
-        container.innerHTML = '<div class="empty-state">Pas assez de données pour générer des graphiques.</div>';
-    }
+    // Auto-detect type
+    autoDetectType();
 }
 
-// Save dataset
-document.getElementById('saveDatasetBtn').addEventListener('click', async () => {
-    if (!parsedData) return;
-    const btn = document.getElementById('saveDatasetBtn');
-    btn.textContent = 'Sauvegarde...';
-    btn.disabled = true;
-    await sb.post('datasets', {
-        name: parsedFileName.replace(/\.(xlsx|xls|csv)$/i, ''),
-        file_name: parsedFileName,
-        columns: parsedColumns,
-        data: parsedData.slice(0, 500),
-        row_count: parsedData.length
+// ===== Auto-detect import type from column names =====
+function autoDetectType() {
+    const colsLower = parsedColumns.map(c => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // Check for transaction-like columns
+    const hasMontant = colsLower.some(c => c.includes('montant') || c.includes('amount') || c.includes('total') || c.includes('prix') || c.includes('ca'));
+    const hasDate = colsLower.some(c => c.includes('date') || c.includes('mois') || c.includes('jour'));
+    const hasLabel = colsLower.some(c => c.includes('libelle') || c.includes('label') || c.includes('description') || c.includes('client') || c.includes('produit'));
+
+    // Check for employee-like columns
+    const hasPrenom = colsLower.some(c => c.includes('prenom') || c.includes('first'));
+    const hasNom = colsLower.some(c => c.includes('nom') || c.includes('last') || c.includes('name'));
+    const hasEmail = colsLower.some(c => c.includes('email') || c.includes('mail'));
+
+    // Check for budget-like columns
+    const hasBudget = colsLower.some(c => c.includes('budget') || c.includes('enveloppe'));
+    const hasDepense = colsLower.some(c => c.includes('depense') || c.includes('spent') || c.includes('consomme'));
+
+    const sel = document.getElementById('importType');
+    if (hasPrenom || (hasNom && hasEmail)) {
+        sel.value = 'employees';
+    } else if (hasBudget || hasDepense) {
+        sel.value = 'budgets';
+    } else if (hasMontant || hasDate || hasLabel) {
+        sel.value = 'transactions';
+    }
+
+    if (sel.value) showMappingFields(sel.value);
+}
+
+// ===== Mapping field definitions =====
+const MAPPINGS = {
+    transactions: [
+        { key: 'label', label: 'Libellé', required: true, hints: ['libelle', 'label', 'description', 'client', 'intitule', 'objet', 'produit'] },
+        { key: 'amount', label: 'Montant', required: true, hints: ['montant', 'amount', 'total', 'prix unitaire', 'somme', 'valeur', 'ca total', 'ca'] },
+        { key: 'type', label: 'Type (entrée/sortie)', required: false, hints: ['type', 'sens', 'direction', 'credit', 'debit'] },
+        { key: 'category', label: 'Catégorie', required: false, hints: ['categorie', 'category', 'rubrique', 'produit', 'commercial'] },
+        { key: 'date', label: 'Date', required: false, hints: ['date', 'jour', 'mois', 'period'] }
+    ],
+    employees: [
+        { key: 'first_name', label: 'Prénom', required: true, hints: ['prenom', 'first', 'prénom'] },
+        { key: 'last_name', label: 'Nom', required: true, hints: ['nom', 'last', 'name', 'famille'] },
+        { key: 'email', label: 'Email', required: false, hints: ['email', 'mail', 'courriel'] },
+        { key: 'role', label: 'Poste', required: false, hints: ['poste', 'role', 'fonction', 'titre', 'job'] },
+        { key: 'department', label: 'Département', required: false, hints: ['departement', 'department', 'service', 'equipe', 'dept'] },
+        { key: 'phone', label: 'Téléphone', required: false, hints: ['telephone', 'phone', 'tel', 'mobile', 'portable'] },
+        { key: 'start_date', label: 'Date d\'entrée', required: false, hints: ['date', 'entree', 'start', 'debut', 'embauche'] }
+    ],
+    budgets: [
+        { key: 'name', label: 'Nom du budget', required: true, hints: ['nom', 'name', 'budget', 'intitule', 'libelle', 'poste'] },
+        { key: 'department', label: 'Département', required: false, hints: ['departement', 'department', 'service'] },
+        { key: 'total_amount', label: 'Montant total', required: true, hints: ['total', 'montant', 'budget', 'enveloppe', 'prevu', 'alloue'] },
+        { key: 'spent_amount', label: 'Montant dépensé', required: false, hints: ['depense', 'spent', 'consomme', 'utilise', 'reel'] },
+        { key: 'period', label: 'Période', required: false, hints: ['periode', 'period', 'annee', 'year', 'mois'] }
+    ]
+};
+
+function bestMatch(hints, usedCols = []) {
+    const colsNorm = parsedColumns.map(c => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, '').trim());
+    for (const hint of hints) {
+        const hintNorm = hint.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const idx = colsNorm.findIndex((c, i) => c.includes(hintNorm) && !usedCols.includes(parsedColumns[i]));
+        if (idx !== -1) return parsedColumns[idx];
+    }
+    return '';
+}
+
+function showMappingFields(type) {
+    const fields = MAPPINGS[type];
+    if (!fields) return;
+
+    const container = document.getElementById('mappingFields');
+    const options = parsedColumns.map(c => `<option value="${c}">${c}</option>`).join('');
+
+    // Match columns avoiding duplicates
+    const usedCols = [];
+    const matches = {};
+    fields.forEach(f => {
+        const matched = bestMatch(f.hints, usedCols);
+        matches[f.key] = matched;
+        if (matched) usedCols.push(matched);
     });
-    btn.textContent = 'Sauvegardé !';
-    setTimeout(() => { btn.textContent = 'Sauvegarder dans Clareo'; btn.disabled = false; }, 2000);
-    loadDatasets();
+
+    container.innerHTML = `
+        <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:14px">Faites correspondre les colonnes de votre fichier aux champs Clareo :</p>
+        <div class="mapping-grid">
+            ${fields.map(f => {
+                return `<div class="mapping-group">
+                    <label class="${f.required ? 'mapping-required' : ''}">${f.label}</label>
+                    <select id="map-${f.key}" data-key="${f.key}">
+                        <option value="">— Ignorer —</option>
+                        ${parsedColumns.map(c => `<option value="${c}" ${c === matches[f.key] ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
+                </div>`;
+            }).join('')}
+        </div>`;
+
+    container.classList.remove('hidden');
+    document.getElementById('importActions').classList.remove('hidden');
+}
+
+document.getElementById('importType').addEventListener('change', e => {
+    if (e.target.value) {
+        showMappingFields(e.target.value);
+    } else {
+        document.getElementById('mappingFields').classList.add('hidden');
+        document.getElementById('importActions').classList.add('hidden');
+    }
+});
+
+// ===== Do the actual import =====
+document.getElementById('doImportBtn').addEventListener('click', async () => {
+    const type = document.getElementById('importType').value;
+    if (!type || !parsedData) return;
+
+    const fields = MAPPINGS[type];
+    const mapping = {};
+    let missingRequired = false;
+
+    fields.forEach(f => {
+        const val = document.getElementById(`map-${f.key}`)?.value || '';
+        mapping[f.key] = val;
+        if (f.required && !val) missingRequired = true;
+    });
+
+    if (missingRequired) {
+        document.getElementById('importStatus').innerHTML = '<div class="import-error">Veuillez remplir tous les champs obligatoires (*)</div>';
+        return;
+    }
+
+    const btn = document.getElementById('doImportBtn');
+    btn.textContent = 'Import en cours...';
+    btn.disabled = true;
+
+    try {
+        let count = 0;
+        const batchSize = 50;
+
+        if (type === 'transactions') {
+            const rows = parsedData.map(r => {
+                const amount = Math.abs(Number(String(r[mapping.amount] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+                if (amount === 0) return null;
+
+                // Detect type: check mapped type column, or check sign of amount
+                let txType = 'credit';
+                if (mapping.type && r[mapping.type]) {
+                    const typeVal = String(r[mapping.type]).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    if (typeVal.includes('debit') || typeVal.includes('sortie') || typeVal.includes('depense') || typeVal.includes('charge')) {
+                        txType = 'debit';
+                    }
+                } else {
+                    const rawAmount = Number(String(r[mapping.amount] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+                    if (rawAmount < 0) txType = 'debit';
+                }
+
+                // Date: try to parse from column or use today
+                let txDate = new Date().toISOString().split('T')[0];
+                if (mapping.date && r[mapping.date]) {
+                    const dVal = r[mapping.date];
+                    if (dVal instanceof Date) {
+                        txDate = dVal.toISOString().split('T')[0];
+                    } else {
+                        // Try common date month name → approximate date
+                        const monthMap = { 'janvier': '01', 'février': '02', 'mars': '03', 'avril': '04', 'mai': '05', 'juin': '06', 'juillet': '07', 'août': '08', 'septembre': '09', 'octobre': '10', 'novembre': '11', 'décembre': '12', 'jan': '01', 'fev': '02', 'mar': '03', 'avr': '04', 'jui': '06', 'jul': '07', 'aou': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12' };
+                        const dStr = String(dVal).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        const foundMonth = Object.keys(monthMap).find(m => dStr.includes(m));
+                        if (foundMonth) {
+                            txDate = `2026-${monthMap[foundMonth]}-15`;
+                        } else {
+                            const parsed = new Date(dVal);
+                            if (!isNaN(parsed)) txDate = parsed.toISOString().split('T')[0];
+                        }
+                    }
+                }
+
+                return {
+                    label: String(r[mapping.label] || 'Sans libellé'),
+                    amount,
+                    type: txType,
+                    category: mapping.category ? String(r[mapping.category] || '') : '',
+                    date: txDate,
+                    account: 'Compte courant'
+                };
+            }).filter(Boolean);
+
+            // Insert in batches
+            for (let i = 0; i < rows.length; i += batchSize) {
+                await sb.post('transactions', rows.slice(i, i + batchSize));
+                count += Math.min(batchSize, rows.length - i);
+            }
+
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} transactions importées avec succès</div>`;
+            setTimeout(() => { window.location.hash = '#banque'; }, 1500);
+
+        } else if (type === 'employees') {
+            const rows = parsedData.map(r => {
+                const firstName = String(r[mapping.first_name] || '').trim();
+                const lastName = String(r[mapping.last_name] || '').trim();
+                if (!firstName && !lastName) return null;
+
+                const emp = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    status: 'En poste'
+                };
+                if (mapping.email && r[mapping.email]) emp.email = String(r[mapping.email]);
+                if (mapping.role && r[mapping.role]) emp.role = String(r[mapping.role]);
+                if (mapping.department && r[mapping.department]) emp.department = String(r[mapping.department]);
+                if (mapping.phone && r[mapping.phone]) emp.phone = String(r[mapping.phone]);
+                if (mapping.start_date && r[mapping.start_date]) {
+                    const d = r[mapping.start_date];
+                    if (d instanceof Date) emp.start_date = d.toISOString().split('T')[0];
+                    else { const p = new Date(d); if (!isNaN(p)) emp.start_date = p.toISOString().split('T')[0]; }
+                }
+                return emp;
+            }).filter(Boolean);
+
+            for (let i = 0; i < rows.length; i += batchSize) {
+                await sb.post('employees', rows.slice(i, i + batchSize));
+                count += Math.min(batchSize, rows.length - i);
+            }
+
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} collaborateurs importés avec succès</div>`;
+            setTimeout(() => { window.location.hash = '#rh'; }, 1500);
+
+        } else if (type === 'budgets') {
+            const rows = parsedData.map(r => {
+                const totalAmount = Math.abs(Number(String(r[mapping.total_amount] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+                if (totalAmount === 0) return null;
+
+                const budget = {
+                    name: String(r[mapping.name] || 'Sans nom'),
+                    total_amount: totalAmount,
+                    spent_amount: 0
+                };
+                if (mapping.department && r[mapping.department]) budget.department = String(r[mapping.department]);
+                if (mapping.spent_amount && r[mapping.spent_amount]) {
+                    budget.spent_amount = Math.abs(Number(String(r[mapping.spent_amount]).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+                }
+                if (mapping.period && r[mapping.period]) budget.period = String(r[mapping.period]);
+                return budget;
+            }).filter(Boolean);
+
+            for (let i = 0; i < rows.length; i += batchSize) {
+                await sb.post('budgets', rows.slice(i, i + batchSize));
+                count += Math.min(batchSize, rows.length - i);
+            }
+
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} budgets importés avec succès</div>`;
+            setTimeout(() => { window.location.hash = '#budgets'; }, 1500);
+        }
+
+        // Also save as dataset for history
+        await sb.post('datasets', {
+            name: parsedFileName.replace(/\.(xlsx|xls|csv)$/i, ''),
+            file_name: parsedFileName,
+            columns: parsedColumns,
+            data: parsedData.slice(0, 100),
+            row_count: parsedData.length
+        });
+        loadDatasets();
+
+    } catch (err) {
+        document.getElementById('importStatus').innerHTML = `<div class="import-error">Erreur lors de l'import : ${err.message}</div>`;
+    }
+
+    btn.textContent = 'Importer les données';
+    btn.disabled = false;
 });
 
 async function loadFichiers() { loadDatasets(); }
@@ -428,20 +594,10 @@ async function loadDatasets() {
                 <p>${d.row_count} lignes &middot; ${d.columns?.length || 0} colonnes &middot; ${fmtDate(d.created_at)}</p>
             </div>
             <div class="dataset-actions">
-                <button class="btn btn-sm btn-ghost" onclick="viewDataset(${d.id})">Voir</button>
                 <button class="action-btn reject" onclick="deleteDataset(${d.id})">Supprimer</button>
             </div>
         </div>`).join('');
 }
-
-window.viewDataset = async function(id) {
-    const [ds] = await sb.get('datasets', `id=eq.${id}`);
-    if (!ds) return;
-    parsedData = ds.data;
-    parsedColumns = ds.columns;
-    parsedFileName = ds.file_name;
-    showPreview();
-};
 
 window.deleteDataset = async function(id) {
     if (!confirm('Supprimer ce fichier ?')) return;
