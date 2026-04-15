@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clareo — Tableau de bord</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="sidebar-logo">
+                    <span class="logo-icon">&#9670;</span> Clareo
+                </a>
+                <span class="beta-badge">BETA</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Tableau de bord
+                </a>
+                <a href="#tresorerie" class="nav-item" data-page="tresorerie">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    Trésorerie
+                </a>
+                <a href="#banque" class="nav-item" data-page="banque">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4h-4z"/></svg>
+                    Banque
+                </a>
+                <a href="#budgets" class="nav-item" data-page="budgets">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>
+                    Budgets
+                </a>
+                <a href="#rh" class="nav-item" data-page="rh">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    Équipe RH
+                </a>
+                <a href="#conges" class="nav-item" data-page="conges">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Congés
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar">SL</div>
+                    <div class="user-info">
+                        <span class="user-name">Samir L.</span>
+                        <span class="user-role">Administrateur</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <!-- Top bar -->
+            <header class="topbar">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <h1 class="page-title" id="pageTitle">Tableau de bord</h1>
+                <div class="topbar-right">
+                    <span class="topbar-date" id="currentDate"></span>
+                </div>
+            </header>
+
+            <!-- Pages container -->
+            <div class="page-container" id="pageContainer">
+                <!-- Dashboard -->
+                <div class="page" id="page-dashboard">
+                    <div class="kpi-grid">
+                        <div class="kpi-card kpi-blue">
+                            <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Trésorerie</span>
+                                <span class="kpi-value" id="kpi-treasury">—</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-green">
+                            <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Entrées ce mois</span>
+                                <span class="kpi-value" id="kpi-income">—</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-orange">
+                            <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Budget consommé</span>
+                                <span class="kpi-value" id="kpi-budget">—</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-purple">
+                            <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Collaborateurs</span>
+                                <span class="kpi-value" id="kpi-employees">—</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Dernières transactions</h3>
+                                <a href="#banque" class="card-link">Tout voir</a>
+                            </div>
+                            <div class="card-body" id="dash-transactions"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Budgets en cours</h3>
+                                <a href="#budgets" class="card-link">Tout voir</a>
+                            </div>
+                            <div class="card-body" id="dash-budgets"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trésorerie -->
+                <div class="page hidden" id="page-tresorerie">
+                    <div class="kpi-grid kpi-grid-3">
+                        <div class="kpi-card kpi-blue">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Solde actuel</span>
+                                <span class="kpi-value" id="treasury-balance">—</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-green">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Total entrées</span>
+                                <span class="kpi-value" id="treasury-in">—</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-red">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Total sorties</span>
+                                <span class="kpi-value" id="treasury-out">—</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Évolution de la trésorerie</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="treasuryChart" height="250"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Répartition des dépenses</h3>
+                        </div>
+                        <div class="card-body" id="treasury-categories"></div>
+                    </div>
+                </div>
+
+                <!-- Banque -->
+                <div class="page hidden" id="page-banque">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Transactions</h3>
+                            <div class="card-actions">
+                                <select id="bankFilter" class="filter-select">
+                                    <option value="all">Toutes catégories</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Libellé</th>
+                                        <th>Catégorie</th>
+                                        <th class="text-right">Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bank-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budgets -->
+                <div class="page hidden" id="page-budgets">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Suivi des budgets</h3>
+                            <button class="btn btn-sm btn-primary" id="addBudgetBtn">+ Nouveau budget</button>
+                        </div>
+                        <div class="card-body" id="budgets-list"></div>
+                    </div>
+                </div>
+
+                <!-- RH -->
+                <div class="page hidden" id="page-rh">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Équipe</h3>
+                            <button class="btn btn-sm btn-primary" id="addEmployeeBtn">+ Nouveau collaborateur</button>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Collaborateur</th>
+                                        <th>Poste</th>
+                                        <th>Département</th>
+                                        <th>Statut</th>
+                                        <th>Date d'entrée</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rh-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Congés -->
+                <div class="page hidden" id="page-conges">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Demandes de congés</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Collaborateur</th>
+                                        <th>Type</th>
+                                        <th>Du</th>
+                                        <th>Au</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="conges-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modalTitle">Titre</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
