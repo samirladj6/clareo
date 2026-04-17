@@ -1,0 +1,27 @@
+﻿Mois;Client;Produit;Quantité;Prix unitaire;CA Total;Statut;Commercial
+Janvier;Dupont SAS;Licence Pro;5;149;745;Payé;Julie
+Janvier;Martin & Co;Licence Starter;12;49;588;Payé;Lucas
+Janvier;Tech Solutions;Formation;2;800;1600;Payé;Julie
+Février;Leroy SARL;Licence Pro;8;149;1192;Payé;Léa
+Février;NovaTech;Licence Enterprise;1;499;499;Payé;Julie
+Février;ABC Corp;Formation;3;800;2400;Payé;Lucas
+Février;GlobalServ;Licence Starter;20;49;980;Payé;Léa
+Mars;FlexiLog;Licence Pro;10;149;1490;Payé;Julie
+Mars;DataFlow;Licence Enterprise;2;499;998;Payé;Lucas
+Mars;Petit Group;Formation;1;800;800;En attente;Léa
+Mars;Dupont SAS;Licence Pro;3;149;447;Payé;Julie
+Mars;Moreau Inc;Licence Starter;15;49;735;Payé;Lucas
+Avril;Tech Solutions;Licence Enterprise;3;499;1497;Payé;Julie
+Avril;Martin & Co;Formation;4;800;3200;En attente;Léa
+Avril;NovaTech;Licence Pro;6;149;894;Payé;Lucas
+Avril;Leroy SARL;Licence Starter;25;49;1225;Payé;Julie
+Avril;ABC Corp;Licence Enterprise;1;499;499;Impayé;Léa
+Mai;GlobalServ;Formation;2;800;1600;En attente;Lucas
+Mai;FlexiLog;Licence Pro;7;149;1043;Payé;Julie
+Mai;DataFlow;Licence Starter;30;49;1470;Payé;Léa
+Mai;Petit Group;Licence Enterprise;2;499;998;Payé;Lucas
+Mai;Dupont SAS;Formation;1;800;800;En attente;Julie
+Juin;Moreau Inc;Licence Pro;12;149;1788;Payé;Léa
+Juin;Tech Solutions;Licence Starter;18;49;882;Payé;Lucas
+Juin;Martin & Co;Licence Enterprise;4;499;1996;Payé;Julie
+Juin;NovaTech;Formation;3;800;2400;En attente;Léa

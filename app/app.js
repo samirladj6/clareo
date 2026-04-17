@@ -48,6 +48,7 @@ document.getElementById('currentDate').textContent =
 const pageTitles = {
     dashboard: 'Vue d\'ensemble',
     tresorerie: 'Trésorerie',
+    compta: 'Comptabilité',
     banque: 'Banque',
     budgets: 'Budgets',
     rh: 'Équipe RH',
@@ -60,7 +61,7 @@ function navigate(page) {
     document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page === page));
     document.getElementById('pageTitle').textContent = pageTitles[page];
     document.getElementById('sidebar').classList.remove('open');
-    const loaders = { dashboard: loadDashboard, tresorerie: loadTresorerie, fichiers: loadFichiers, banque: loadBank, budgets: loadBudgets, rh: loadRH, conges: loadLeaves };
+    const loaders = { dashboard: loadDashboard, tresorerie: loadTresorerie, compta: loadCompta, fichiers: loadFichiers, banque: loadBank, budgets: loadBudgets, rh: loadRH, conges: loadLeaves };
     if (loaders[page]) loaders[page]();
 }
 
@@ -132,6 +133,11 @@ async function loadDashboard() {
         if (t.type === 'credit') monthly[k].in += +t.amount; else monthly[k].out += +t.amount;
     });
     const months = Object.keys(monthly).sort();
+    const dashCanvas = document.getElementById('dashChart');
+    if (!months.length) {
+        const ctx = dashCanvas.getContext('2d');
+        ctx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
+    }
     if (months.length) {
         const flux = months.map(m => monthly[m].in - monthly[m].out);
         const currentMonth = now.toISOString().substring(0, 7);
@@ -170,9 +176,18 @@ async function loadTresorerie() {
     const solde = credits - debits;
 
     document.getElementById('treso-solde').textContent = fmt(solde);
-    // Simple forecast: current trend projected +30 days
     const forecast = Math.round(solde * 1.12);
     document.getElementById('treso-forecast').textContent = fmt(forecast);
+
+    // Handle empty state
+    destroyChart('tresoChart');
+    if (!tx.length) {
+        const c = document.getElementById('tresoChart');
+        c.getContext('2d').clearRect(0, 0, c.width, c.height);
+        document.getElementById('treso-credits').innerHTML = '<div class="empty-state">Aucune donnée. Importez un fichier pour commencer.</div>';
+        document.getElementById('treso-debits').innerHTML = '<div class="empty-state">Aucune donnée</div>';
+        return;
+    }
 
     // Monthly cumulative balance for chart
     const monthly = {};
@@ -193,7 +208,6 @@ async function loadTresorerie() {
     balances.push(forecast);
 
     // Line chart with gradient fill
-    destroyChart('tresoChart');
     const canvas = document.getElementById('tresoChart');
     const ctx = canvas.getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 280);
@@ -248,6 +262,68 @@ async function loadTresorerie() {
             <span class="tx-amount debit">-${fmt(t.amount)}</span>
         </div>`).join('') || '<div class="empty-state">Aucune sortie ce mois</div>';
 }
+
+// ===========================================
+//  COMPTA
+// ===========================================
+async function loadCompta() {
+    const tx = await sb.get('transactions', 'order=date.desc');
+
+    const credits = tx.filter(t => t.type === 'credit');
+    const debits = tx.filter(t => t.type === 'debit');
+    const totalCA = credits.reduce((s, t) => s + +t.amount, 0);
+    const totalDep = debits.reduce((s, t) => s + +t.amount, 0);
+    const resultat = totalCA - totalDep;
+
+    document.getElementById('compta-ca').textContent = fmt(totalCA);
+    document.getElementById('compta-nb').textContent = credits.length;
+    document.getElementById('compta-depenses').textContent = fmt(totalDep);
+    document.getElementById('compta-resultat').textContent = fmt(resultat);
+
+    document.getElementById('compta-ca-sub').textContent = credits.length ? `${credits.length} factures` : 'Aucune facture';
+    document.getElementById('compta-nb-sub').textContent = credits.length ? 'cette période' : '';
+    document.getElementById('compta-depenses-sub').textContent = debits.length ? `${debits.length} opérations` : 'Aucune dépense';
+    const resSub = document.getElementById('compta-resultat-sub');
+    resSub.textContent = resultat >= 0 ? 'Bénéfice' : 'Perte';
+    resSub.className = 'kpi-sub ' + (resultat >= 0 ? 'positive' : 'warning');
+
+    // Invoice list — show credit (incoming) transactions as invoices
+    const tbody = document.getElementById('compta-table-body');
+    if (!credits.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune facture pour l\'instant. Importez un fichier Excel pour commencer.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = credits.map((t, i) => {
+        const invoiceNum = `F-${String(2026000 + t.id).padStart(4, '0')}`;
+        return `<tr>
+            <td>${fmtDateShort(t.date)}</td>
+            <td><strong>${t.label}</strong><br><span style="font-size:0.72rem;color:var(--text-lighter)">${invoiceNum}</span></td>
+            <td>${t.category || '—'}</td>
+            <td class="text-right"><strong>${fmt(t.amount)}</strong></td>
+            <td><span class="status status-paye">Payé</span></td>
+            <td><button class="action-btn reject" onclick="deleteTx(${t.id})">&#10005;</button></td>
+        </tr>`;
+    }).join('');
+}
+
+document.getElementById('addInvoiceBtn').addEventListener('click', () => {
+    openModal('Nouvelle facture', `
+        <form id="invoiceForm">
+            <div class="form-group"><label>Client</label><input type="text" name="label" required placeholder="Ex : Dupont SAS"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Prestation</label><input type="text" name="category" placeholder="Ex : Licence Pro"></div>
+                <div class="form-group"><label>Montant HT (€)</label><input type="number" name="amount" step="0.01" required></div>
+            </div>
+            <div class="form-group"><label>Date d'émission</label><input type="date" name="date" value="${new Date().toISOString().split('T')[0]}"></div>
+            <div class="form-actions"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Créer</button></div>
+        </form>`);
+    document.getElementById('invoiceForm').onsubmit = async e => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        await sb.post('transactions', { label: fd.get('label'), amount: +fd.get('amount'), type: 'credit', category: fd.get('category'), date: fd.get('date') });
+        closeModal(); loadCompta();
+    };
+});
 
 // ===========================================
 //  FICHIERS / IMPORT EXCEL
@@ -313,32 +389,10 @@ function showPreview() {
 
 // ===== Auto-detect import type from column names =====
 function autoDetectType() {
-    const colsLower = parsedColumns.map(c => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-
-    // Check for transaction-like columns
-    const hasMontant = colsLower.some(c => c.includes('montant') || c.includes('amount') || c.includes('total') || c.includes('prix') || c.includes('ca'));
-    const hasDate = colsLower.some(c => c.includes('date') || c.includes('mois') || c.includes('jour'));
-    const hasLabel = colsLower.some(c => c.includes('libelle') || c.includes('label') || c.includes('description') || c.includes('client') || c.includes('produit'));
-
-    // Check for employee-like columns
-    const hasPrenom = colsLower.some(c => c.includes('prenom') || c.includes('first'));
-    const hasNom = colsLower.some(c => c.includes('nom') || c.includes('last') || c.includes('name'));
-    const hasEmail = colsLower.some(c => c.includes('email') || c.includes('mail'));
-
-    // Check for budget-like columns
-    const hasBudget = colsLower.some(c => c.includes('budget') || c.includes('enveloppe'));
-    const hasDepense = colsLower.some(c => c.includes('depense') || c.includes('spent') || c.includes('consomme'));
-
+    // By default, propose "Démo rapide" — the most useful option for a client demo
     const sel = document.getElementById('importType');
-    if (hasPrenom || (hasNom && hasEmail)) {
-        sel.value = 'employees';
-    } else if (hasBudget || hasDepense) {
-        sel.value = 'budgets';
-    } else if (hasMontant || hasDate || hasLabel) {
-        sel.value = 'transactions';
-    }
-
-    if (sel.value) showMappingFields(sel.value);
+    sel.value = 'demo';
+    showMappingFields('demo');
 }
 
 // ===== Mapping field definitions =====
@@ -379,11 +433,28 @@ function bestMatch(hints, usedCols = []) {
 }
 
 function showMappingFields(type) {
+    const container = document.getElementById('mappingFields');
+
+    if (type === 'demo') {
+        // Demo mode: show a preview of what will be generated
+        const plan = planDemoImport();
+        container.innerHTML = `
+            <div style="background:var(--primary-bg);border-radius:10px;padding:16px 18px;margin-bottom:10px">
+                <p style="font-size:0.85rem;color:var(--primary-dark);font-weight:600;margin-bottom:10px">À partir de ce fichier, Clareo va générer automatiquement :</p>
+                <ul style="list-style:none;padding:0;display:grid;gap:8px">
+                    <li style="font-size:0.85rem;color:var(--text)">📊 <strong>${plan.transactions}</strong> transactions → onglets Compta, Banque, Trésorerie</li>
+                    <li style="font-size:0.85rem;color:var(--text)">👥 <strong>${plan.employees}</strong> collaborateurs → onglet RH</li>
+                    <li style="font-size:0.85rem;color:var(--text)">📁 <strong>${plan.budgets}</strong> budgets → onglet Budgets</li>
+                </ul>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-lighter);margin-top:10px">Tout sera calculé automatiquement à partir des colonnes détectées. Idéal pour une démo client.</p>`;
+        container.classList.remove('hidden');
+        document.getElementById('importActions').classList.remove('hidden');
+        return;
+    }
+
     const fields = MAPPINGS[type];
     if (!fields) return;
-
-    const container = document.getElementById('mappingFields');
-    const options = parsedColumns.map(c => `<option value="${c}">${c}</option>`).join('');
 
     // Match columns avoiding duplicates
     const usedCols = [];
@@ -412,6 +483,60 @@ function showMappingFields(type) {
     document.getElementById('importActions').classList.remove('hidden');
 }
 
+// ===== Plan the demo import: detect columns and estimate output =====
+function planDemoImport() {
+    const colsNorm = parsedColumns.map(c => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // Detect a numeric amount column — require real numbers, not just strippable text
+    const isNumericValue = v => {
+        if (typeof v === 'number') return true;
+        const s = String(v).trim();
+        if (!/\d/.test(s)) return false;  // must contain at least one digit
+        const cleaned = s.replace(/[^\d.,-]/g, '').replace(',', '.');
+        return cleaned !== '' && !isNaN(Number(cleaned));
+    };
+    const numericCols = parsedColumns.filter(c => {
+        const sample = parsedData.slice(0, 20).map(r => r[c]).filter(v => v !== '' && v !== null);
+        return sample.length && sample.every(isNumericValue);
+    });
+
+    // Detect people column (e.g. "Commercial", "Vendeur", "Responsable")
+    const peopleCol = parsedColumns.find((c, i) => {
+        const n = colsNorm[i];
+        return n.includes('commercial') || n.includes('vendeur') || n.includes('responsable') || n.includes('employe') || n.includes('collaborateur') || n.includes('gerant');
+    });
+
+    // Detect category column (e.g. "Produit", "Categorie", "Type")
+    const catCol = parsedColumns.find((c, i) => {
+        const n = colsNorm[i];
+        return n.includes('produit') || n.includes('categorie') || n.includes('category') || n.includes('type') || n.includes('rubrique');
+    });
+
+    const uniquePeople = peopleCol ? [...new Set(parsedData.map(r => String(r[peopleCol] || '').trim()).filter(Boolean))] : [];
+    const uniqueCats = catCol ? [...new Set(parsedData.map(r => String(r[catCol] || '').trim()).filter(Boolean))] : [];
+
+    // Pick the best amount column: prefer names containing "total", "ca", "montant", "amount"
+    const priorityHints = ['ca total', 'ca ', 'total', 'montant', 'amount', 'prix total', 'sum'];
+    let amountCol = null;
+    for (const hint of priorityHints) {
+        const found = numericCols.find(c => {
+            const n = c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return n.includes(hint);
+        });
+        if (found) { amountCol = found; break; }
+    }
+    if (!amountCol) amountCol = numericCols[numericCols.length - 1] || null;
+
+    return {
+        transactions: amountCol ? parsedData.length : 0,
+        employees: uniquePeople.length,
+        budgets: uniqueCats.length,
+        peopleCol,
+        catCol,
+        amountCol
+    };
+}
+
 document.getElementById('importType').addEventListener('change', e => {
     if (e.target.value) {
         showMappingFields(e.target.value);
@@ -421,10 +546,153 @@ document.getElementById('importType').addEventListener('change', e => {
     }
 });
 
+// ===== Demo import: auto-populate all tabs from one file =====
+async function runDemoImport() {
+    const plan = planDemoImport();
+    const colsNorm = parsedColumns.map(c => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // Identify columns
+    const amountCol = plan.amountCol;
+    const labelCol = parsedColumns.find((c, i) => { const n = colsNorm[i]; return n.includes('client') || n.includes('libelle') || n.includes('nom') || n.includes('description'); }) || parsedColumns[0];
+    const dateCol = parsedColumns.find((c, i) => { const n = colsNorm[i]; return n.includes('date') || n.includes('mois'); });
+    const catCol = plan.catCol;
+    const peopleCol = plan.peopleCol;
+
+    let txCount = 0, empCount = 0, budCount = 0;
+
+    // 1. TRANSACTIONS (-> Banque, Compta, Tréso)
+    if (amountCol) {
+        const monthMap = { 'janvier':'01','fevrier':'02','mars':'03','avril':'04','mai':'05','juin':'06','juillet':'07','aout':'08','septembre':'09','octobre':'10','novembre':'11','decembre':'12','jan':'01','fev':'02','mar':'03','avr':'04','jui':'06','jul':'07','aou':'08','sep':'09','oct':'10','nov':'11','dec':'12' };
+        const txRows = parsedData.map((r, i) => {
+            const amount = Math.abs(Number(String(r[amountCol] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+            if (amount === 0) return null;
+
+            let txDate = new Date().toISOString().split('T')[0];
+            if (dateCol && r[dateCol]) {
+                const dVal = r[dateCol];
+                if (dVal instanceof Date) txDate = dVal.toISOString().split('T')[0];
+                else {
+                    const dStr = String(dVal).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const found = Object.keys(monthMap).find(m => dStr.includes(m));
+                    if (found) txDate = `2026-${monthMap[found]}-${String((i % 25) + 1).padStart(2,'0')}`;
+                    else { const p = new Date(dVal); if (!isNaN(p)) txDate = p.toISOString().split('T')[0]; }
+                }
+            }
+
+            return {
+                label: String(r[labelCol] || 'Transaction'),
+                amount,
+                type: 'credit',
+                category: catCol ? String(r[catCol] || '') : '',
+                date: txDate,
+                account: 'Compte courant'
+            };
+        }).filter(Boolean);
+
+        // Add a few realistic debit transactions for a complete demo (charges, salaires)
+        const currentMonth = new Date().toISOString().substring(0, 7);
+        const demoDebits = [
+            { label: 'Loyer bureau', amount: 2500, type: 'debit', category: 'Loyer', date: `${currentMonth}-05`, account: 'Compte courant' },
+            { label: 'Salaires', amount: Math.round(txRows.length * 800), type: 'debit', category: 'Salaires', date: `${currentMonth}-28`, account: 'Compte courant' },
+            { label: 'URSSAF', amount: Math.round(txRows.length * 250), type: 'debit', category: 'Charges', date: `${currentMonth}-15`, account: 'Compte courant' },
+            { label: 'Abonnements logiciels', amount: 340, type: 'debit', category: 'IT', date: `${currentMonth}-10`, account: 'Compte courant' }
+        ];
+
+        const allTx = [...txRows, ...demoDebits];
+        for (let i = 0; i < allTx.length; i += 50) {
+            await sb.post('transactions', allTx.slice(i, i + 50));
+        }
+        txCount = allTx.length;
+    }
+
+    // 2. EMPLOYEES (from people column)
+    if (peopleCol) {
+        const unique = [...new Set(parsedData.map(r => String(r[peopleCol] || '').trim()).filter(Boolean))];
+        const departments = ['Commercial', 'Technique', 'Finance', 'Marketing'];
+        const roles = ['Responsable commercial', 'Chargé de clientèle', 'Business developer', 'Account manager'];
+
+        const empRows = unique.map((name, i) => {
+            const parts = name.split(/\s+/);
+            const firstName = parts[0] || name;
+            const lastName = parts.slice(1).join(' ') || '';
+            return {
+                first_name: firstName,
+                last_name: lastName,
+                email: `${firstName.toLowerCase().replace(/[^a-z]/g, '')}@entreprise.fr`,
+                role: roles[i % roles.length],
+                department: departments[i % departments.length],
+                status: 'En poste',
+                start_date: `202${3 + (i % 3)}-0${(i % 9) + 1}-15`
+            };
+        });
+
+        if (empRows.length) {
+            for (let i = 0; i < empRows.length; i += 50) {
+                await sb.post('employees', empRows.slice(i, i + 50));
+            }
+            empCount = empRows.length;
+        }
+    }
+
+    // 3. BUDGETS (from category column)
+    if (catCol && amountCol) {
+        const aggregated = {};
+        parsedData.forEach(r => {
+            const k = String(r[catCol] || '').trim();
+            if (!k) return;
+            const v = Math.abs(Number(String(r[amountCol] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+            aggregated[k] = (aggregated[k] || 0) + v;
+        });
+
+        const budgetRows = Object.entries(aggregated).map(([name, total]) => ({
+            name,
+            department: 'Commercial',
+            total_amount: Math.round(total * 1.5),  // target = current + 50%
+            spent_amount: Math.round(total),
+            period: '2026'
+        }));
+
+        if (budgetRows.length) {
+            for (let i = 0; i < budgetRows.length; i += 50) {
+                await sb.post('budgets', budgetRows.slice(i, i + 50));
+            }
+            budCount = budgetRows.length;
+        }
+    }
+
+    return { txCount, empCount, budCount };
+}
+
 // ===== Do the actual import =====
 document.getElementById('doImportBtn').addEventListener('click', async () => {
     const type = document.getElementById('importType').value;
     if (!type || !parsedData) return;
+
+    const btn = document.getElementById('doImportBtn');
+    btn.textContent = 'Import en cours...';
+    btn.disabled = true;
+
+    // DEMO MODE: populate all tabs at once
+    if (type === 'demo') {
+        try {
+            const result = await runDemoImport();
+            await sb.post('datasets', {
+                name: parsedFileName.replace(/\.(xlsx|xls|csv)$/i, ''),
+                file_name: parsedFileName,
+                columns: parsedColumns,
+                data: parsedData.slice(0, 100),
+                row_count: parsedData.length
+            });
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">Démo prête ! ${result.txCount} transactions · ${result.empCount} collaborateurs · ${result.budCount} budgets</div>`;
+            setTimeout(() => { window.location.hash = '#dashboard'; }, 1500);
+        } catch (err) {
+            document.getElementById('importStatus').innerHTML = `<div class="import-error">Erreur : ${err.message}</div>`;
+        }
+        btn.textContent = 'Importer les données';
+        btn.disabled = false;
+        loadDatasets();
+        return;
+    }
 
     const fields = MAPPINGS[type];
     const mapping = {};
@@ -438,12 +706,10 @@ document.getElementById('doImportBtn').addEventListener('click', async () => {
 
     if (missingRequired) {
         document.getElementById('importStatus').innerHTML = '<div class="import-error">Veuillez remplir tous les champs obligatoires (*)</div>';
+        btn.textContent = 'Importer les données';
+        btn.disabled = false;
         return;
     }
-
-    const btn = document.getElementById('doImportBtn');
-    btn.textContent = 'Import en cours...';
-    btn.disabled = true;
 
     try {
         let count = 0;
@@ -582,6 +848,41 @@ document.getElementById('doImportBtn').addEventListener('click', async () => {
 });
 
 async function loadFichiers() { loadDatasets(); }
+
+// ===== Reset all data =====
+document.getElementById('resetAppBtn').addEventListener('click', async () => {
+    if (!confirm('Supprimer TOUTES les données (transactions, collaborateurs, budgets, congés) ? Cette action est irréversible.')) return;
+
+    const btn = document.getElementById('resetAppBtn');
+    btn.textContent = 'Réinitialisation...';
+    btn.disabled = true;
+
+    try {
+        // Fetch all IDs then delete — Supabase doesn't support DELETE without filter via PostgREST
+        const [tx, emps, buds, leaves, dss] = await Promise.all([
+            sb.get('transactions', 'select=id'),
+            sb.get('employees', 'select=id'),
+            sb.get('budgets', 'select=id'),
+            sb.get('leaves', 'select=id'),
+            sb.get('datasets', 'select=id')
+        ]);
+
+        await Promise.all([
+            ...tx.map(r => sb.del('transactions', r.id)),
+            ...emps.map(r => sb.del('employees', r.id)),
+            ...buds.map(r => sb.del('budgets', r.id)),
+            ...leaves.map(r => sb.del('leaves', r.id)),
+            ...dss.map(r => sb.del('datasets', r.id))
+        ]);
+
+        btn.textContent = 'Données supprimées ✓';
+        setTimeout(() => { btn.textContent = 'Réinitialiser l\'app'; btn.disabled = false; loadDatasets(); }, 1500);
+    } catch (err) {
+        alert('Erreur : ' + err.message);
+        btn.textContent = 'Réinitialiser l\'app';
+        btn.disabled = false;
+    }
+});
 
 async function loadDatasets() {
     const datasets = await sb.get('datasets', 'order=created_at.desc');

@@ -36,6 +36,10 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                     Équipe RH
                 </a>
+                <a href="#compta" class="nav-item" data-page="compta">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    Compta
+                </a>
                 <a href="#banque" class="nav-item" data-page="banque">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4h-4z"/></svg>
                     Banque
@@ -146,6 +150,46 @@
                     </div>
                 </div>
 
+                <!-- COMPTA -->
+                <div class="page hidden" id="page-compta">
+                    <div class="kpi-grid">
+                        <div class="kpi-card kpi-green">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Chiffre d'affaires</span>
+                                <span class="kpi-value" id="compta-ca">—</span>
+                                <span class="kpi-sub neutral" id="compta-ca-sub"></span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-blue">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Factures émises</span>
+                                <span class="kpi-value" id="compta-nb">—</span>
+                                <span class="kpi-sub neutral" id="compta-nb-sub"></span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-orange">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Dépenses</span>
+                                <span class="kpi-value" id="compta-depenses">—</span>
+                                <span class="kpi-sub neutral" id="compta-depenses-sub"></span>
+                            </div>
+                        </div>
+                        <div class="kpi-card kpi-purple">
+                            <div class="kpi-content">
+                                <span class="kpi-label">Résultat net</span>
+                                <span class="kpi-value" id="compta-resultat">—</span>
+                                <span class="kpi-sub positive" id="compta-resultat-sub"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Factures clients</h3><button class="btn btn-sm btn-primary" id="addInvoiceBtn">+ Facture</button></div>
+                        <div class="card-body">
+                            <table class="data-table"><thead><tr><th>Date</th><th>Client</th><th>Prestation</th><th class="text-right">Montant</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="compta-table-body"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- BANQUE -->
                 <div class="page hidden" id="page-banque">
                     <div class="accounts-grid" id="accounts-grid">
@@ -203,7 +247,10 @@
                 <!-- FICHIERS / IMPORT EXCEL -->
                 <div class="page hidden" id="page-fichiers">
                     <div class="card">
-                        <div class="card-header"><h3>Importer un fichier Excel</h3></div>
+                        <div class="card-header">
+                            <h3>Importer un fichier Excel</h3>
+                            <button class="btn btn-sm btn-danger" id="resetAppBtn" title="Vider toutes les données">Réinitialiser l'app</button>
+                        </div>
                         <div class="card-body">
                             <div class="upload-zone" id="uploadZone">
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -231,7 +278,8 @@
                                     <label>Type de données</label>
                                     <select id="importType" class="filter-select" style="width:100%;padding:10px 14px;font-size:0.88rem;border-radius:10px">
                                         <option value="">— Choisir le type —</option>
-                                        <option value="transactions">Transactions bancaires</option>
+                                        <option value="demo">Démo rapide — remplir tous les onglets automatiquement</option>
+                                        <option value="transactions">Transactions bancaires / Factures</option>
                                         <option value="employees">Collaborateurs (RH)</option>
                                         <option value="budgets">Budgets</option>
                                     </select>
