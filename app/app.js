@@ -200,10 +200,12 @@ async function loadTresorerie() {
     let cumulative = 0;
     const balances = months.map(m => { cumulative += monthly[m]; return cumulative; });
 
-    // Add forecast point
-    const lastMonth = months[months.length - 1];
+    // Add forecast point (handle month 13 wrap-around)
+    const lastMonth = months[months.length - 1] || new Date().toISOString().substring(0, 7);
     const [y, mo] = lastMonth.split('-').map(Number);
-    const nextMonth = `${y}-${String(mo + 1).padStart(2, '0')}`;
+    const nextY = mo === 12 ? y + 1 : y;
+    const nextMo = mo === 12 ? 1 : mo + 1;
+    const nextMonth = `${nextY}-${String(nextMo).padStart(2, '0')}`;
     months.push(nextMonth);
     balances.push(forecast);
 
@@ -344,17 +346,70 @@ fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(
 function handleFile(file) {
     if (!file) return;
     parsedFileName = file.name;
+    const isCSV = /\.csv$/i.test(file.name);
     const reader = new FileReader();
     reader.onload = e => {
-        const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+        let wb;
+        if (isCSV) {
+            // Decode CSV as UTF-8 (strip BOM) + raw strings (avoid SheetJS US-date parsing bug)
+            let text = new TextDecoder('utf-8').decode(e.target.result);
+            if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+            wb = XLSX.read(text, { type: 'string', cellDates: false, raw: true });
+        } else {
+            wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+        }
         const sheet = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        const json = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: !isCSV });
         if (!json.length) return alert('Le fichier est vide.');
         parsedColumns = Object.keys(json[0]);
         parsedData = json;
         showPreview();
     };
     reader.readAsArrayBuffer(file);
+}
+
+// ===== Utilities: parse amount / date / type =====
+function parseAmount(v) {
+    if (v === null || v === undefined || v === '') return 0;
+    if (typeof v === 'number') return v;
+    const s = String(v).trim().replace(/\s/g, '').replace(/€/g, '');
+    // French format: "1 234,56" → "1234.56"
+    const cleaned = s.replace(/\.(?=\d{3})/g, '').replace(',', '.');
+    const n = Number(cleaned.replace(/[^\d.-]/g, ''));
+    return isNaN(n) ? 0 : n;
+}
+
+function parseDate(v) {
+    if (!v) return null;
+    if (v instanceof Date) return isNaN(v) ? null : v.toISOString().split('T')[0];
+    const s = String(v).trim();
+
+    // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY (French)
+    const frMatch = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+    if (frMatch) {
+        let [, d, m, y] = frMatch;
+        if (y.length === 2) y = (+y > 50 ? '19' : '20') + y;
+        return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    }
+
+    // YYYY-MM-DD
+    const isoMatch = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (isoMatch) return `${isoMatch[1]}-${isoMatch[2].padStart(2,'0')}-${isoMatch[3].padStart(2,'0')}`;
+
+    // Month name: "Janvier", "janv 2026"
+    const monthMap = { 'janvier':'01','fevrier':'02','mars':'03','avril':'04','mai':'05','juin':'06','juillet':'07','aout':'08','septembre':'09','octobre':'10','novembre':'11','decembre':'12','jan':'01','fev':'02','mar':'03','avr':'04','jui':'06','jul':'07','aou':'08','sep':'09','oct':'10','nov':'11','dec':'12' };
+    const sNorm = s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const found = Object.keys(monthMap).find(m => sNorm.includes(m));
+    if (found) {
+        const yearMatch = s.match(/(20\d{2})/);
+        const year = yearMatch ? yearMatch[1] : '2026';
+        return `${year}-${monthMap[found]}-15`;
+    }
+
+    // Fallback: native parse
+    const native = new Date(s);
+    if (!isNaN(native)) return native.toISOString().split('T')[0];
+    return null;
 }
 
 function formatCell(v) {
@@ -387,38 +442,68 @@ function showPreview() {
     autoDetectType();
 }
 
-// ===== Auto-detect import type from column names =====
+// ===== Auto-detect import type from column names (scoring) =====
 function autoDetectType() {
-    // By default, propose "Démo rapide" — the most useful option for a client demo
+    const colsNorm = parsedColumns.map(c => c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    const scores = { transactions: 0, employees: 0, budgets: 0 };
+
+    // Employee signals (strongest signal → prénom + nom + email/poste)
+    if (colsNorm.some(c => c.includes('prenom'))) scores.employees += 3;
+    if (colsNorm.some(c => c.includes('famille') || c === 'nom' || c.includes('nom de') || c.includes('last'))) scores.employees += 2;
+    if (colsNorm.some(c => c.includes('email') || c.includes('mail'))) scores.employees += 2;
+    if (colsNorm.some(c => c.includes('poste') || c.includes('fonction') || c.includes('role'))) scores.employees += 2;
+    if (colsNorm.some(c => c.includes('matricule') || c.includes('embauche'))) scores.employees += 2;
+
+    // Budget signals (strongest → enveloppe, alloue, consomme)
+    if (colsNorm.some(c => c.includes('enveloppe') || c.includes('alloue'))) scores.budgets += 4;
+    if (colsNorm.some(c => c.includes('budget') || c.includes('poste budget'))) scores.budgets += 3;
+    if (colsNorm.some(c => c.includes('consomme') || c.includes('consume'))) scores.budgets += 3;
+
+    // Transaction signals
+    if (colsNorm.some(c => c.includes('debit') || c.includes('credit'))) scores.transactions += 4;
+    if (colsNorm.some(c => c.includes('montant') || c.includes('amount'))) scores.transactions += 2;
+    if (colsNorm.some(c => c.includes('solde'))) scores.transactions += 2;
+    if (colsNorm.some(c => c.includes('libelle') || c.includes('description') || c.includes('operation'))) scores.transactions += 2;
+    if (colsNorm.some(c => c.includes('date') && c.includes('operation'))) scores.transactions += 2;
+    if (colsNorm.some(c => c.includes('client') && (c.includes('ca') || c.includes('montant')))) scores.transactions += 1;
+    if (colsNorm.some(c => c.includes('ca') || c.includes('facture'))) scores.transactions += 1;
+
     const sel = document.getElementById('importType');
-    sel.value = 'demo';
-    showMappingFields('demo');
+    const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+    if (best[1] >= 3) {
+        sel.value = best[0];
+        showMappingFields(best[0]);
+    } else {
+        sel.value = '';
+    }
 }
 
 // ===== Mapping field definitions =====
 const MAPPINGS = {
     transactions: [
-        { key: 'label', label: 'Libellé', required: true, hints: ['libelle', 'label', 'description', 'client', 'intitule', 'objet', 'produit'] },
-        { key: 'amount', label: 'Montant', required: true, hints: ['montant', 'amount', 'total', 'prix unitaire', 'somme', 'valeur', 'ca total', 'ca'] },
-        { key: 'type', label: 'Type (entrée/sortie)', required: false, hints: ['type', 'sens', 'direction', 'credit', 'debit'] },
-        { key: 'category', label: 'Catégorie', required: false, hints: ['categorie', 'category', 'rubrique', 'produit', 'commercial'] },
-        { key: 'date', label: 'Date', required: false, hints: ['date', 'jour', 'mois', 'period'] }
+        { key: 'label', label: 'Libellé', required: true, hints: ['libelle', 'label', 'description', 'intitule', 'objet', 'client'] },
+        { key: 'date', label: 'Date', required: false, hints: ['date operation', 'date', 'jour'] },
+        { key: 'amount', label: 'Montant (colonne unique)', required: false, hints: ['montant', 'amount', 'ca total', 'total', 'somme', 'valeur'] },
+        { key: 'debit', label: 'Débit / Sortie', required: false, hints: ['debit', 'sortie', 'retrait', 'depense'] },
+        { key: 'credit', label: 'Crédit / Entrée', required: false, hints: ['credit', 'entree', 'recette', 'depot'] },
+        { key: 'category', label: 'Catégorie / Nature', required: false, hints: ['nature', 'categorie', 'category', 'rubrique', 'type operation'] }
     ],
     employees: [
-        { key: 'first_name', label: 'Prénom', required: true, hints: ['prenom', 'first', 'prénom'] },
-        { key: 'last_name', label: 'Nom', required: true, hints: ['nom', 'last', 'name', 'famille'] },
+        { key: 'first_name', label: 'Prénom', required: true, hints: ['prenom', 'first name', 'first'] },
+        { key: 'last_name', label: 'Nom', required: true, hints: ['nom de famille', 'famille', 'last name', 'nom', 'last'] },
         { key: 'email', label: 'Email', required: false, hints: ['email', 'mail', 'courriel'] },
-        { key: 'role', label: 'Poste', required: false, hints: ['poste', 'role', 'fonction', 'titre', 'job'] },
-        { key: 'department', label: 'Département', required: false, hints: ['departement', 'department', 'service', 'equipe', 'dept'] },
-        { key: 'phone', label: 'Téléphone', required: false, hints: ['telephone', 'phone', 'tel', 'mobile', 'portable'] },
-        { key: 'start_date', label: 'Date d\'entrée', required: false, hints: ['date', 'entree', 'start', 'debut', 'embauche'] }
+        { key: 'role', label: 'Poste / Fonction', required: false, hints: ['fonction', 'poste', 'role', 'titre', 'job'] },
+        { key: 'department', label: 'Département / Service', required: false, hints: ['service', 'departement', 'department', 'equipe', 'dept'] },
+        { key: 'phone', label: 'Téléphone', required: false, hints: ['mobile', 'telephone', 'phone', 'tel', 'portable'] },
+        { key: 'start_date', label: 'Date d\'embauche', required: false, hints: ['embauche', 'date entree', 'start date', 'date debut'] }
     ],
     budgets: [
-        { key: 'name', label: 'Nom du budget', required: true, hints: ['nom', 'name', 'budget', 'intitule', 'libelle', 'poste'] },
-        { key: 'department', label: 'Département', required: false, hints: ['departement', 'department', 'service'] },
-        { key: 'total_amount', label: 'Montant total', required: true, hints: ['total', 'montant', 'budget', 'enveloppe', 'prevu', 'alloue'] },
-        { key: 'spent_amount', label: 'Montant dépensé', required: false, hints: ['depense', 'spent', 'consomme', 'utilise', 'reel'] },
-        { key: 'period', label: 'Période', required: false, hints: ['periode', 'period', 'annee', 'year', 'mois'] }
+        { key: 'name', label: 'Nom du budget', required: true, hints: ['poste budget', 'intitule', 'libelle budget', 'nom budget', 'budget', 'poste', 'nom'] },
+        { key: 'total_amount', label: 'Montant alloué', required: true, hints: ['enveloppe', 'alloue', 'montant total', 'budget total', 'total', 'prevu'] },
+        { key: 'spent_amount', label: 'Montant dépensé', required: false, hints: ['consomme', 'depense', 'spent', 'consume', 'utilise', 'reel'] },
+        { key: 'department', label: 'Équipe / Département', required: false, hints: ['equipe', 'departement', 'department', 'service'] },
+        { key: 'period', label: 'Période', required: false, hints: ['periode', 'period', 'annee', 'year'] }
     ]
 };
 
@@ -716,60 +801,57 @@ document.getElementById('doImportBtn').addEventListener('click', async () => {
         const batchSize = 50;
 
         if (type === 'transactions') {
+            // Validate: need either (amount) or (debit+credit)
+            if (!mapping.amount && !mapping.debit && !mapping.credit) {
+                document.getElementById('importStatus').innerHTML = '<div class="import-error">Mappez soit la colonne "Montant" unique, soit les colonnes "Débit" et "Crédit"</div>';
+                btn.textContent = 'Importer les données'; btn.disabled = false;
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
             const rows = parsedData.map(r => {
-                const amount = Math.abs(Number(String(r[mapping.amount] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+                let amount = 0;
+                let txType = 'credit';
+
+                if (mapping.debit || mapping.credit) {
+                    // Bank statement style: 2 columns
+                    const debitVal = mapping.debit ? parseAmount(r[mapping.debit]) : 0;
+                    const creditVal = mapping.credit ? parseAmount(r[mapping.credit]) : 0;
+                    if (Math.abs(debitVal) > 0) { amount = Math.abs(debitVal); txType = 'debit'; }
+                    else if (Math.abs(creditVal) > 0) { amount = Math.abs(creditVal); txType = 'credit'; }
+                } else if (mapping.amount) {
+                    const raw = parseAmount(r[mapping.amount]);
+                    amount = Math.abs(raw);
+                    if (raw < 0) txType = 'debit';
+                }
+
                 if (amount === 0) return null;
 
-                // Detect type: check mapped type column, or check sign of amount
-                let txType = 'credit';
-                if (mapping.type && r[mapping.type]) {
-                    const typeVal = String(r[mapping.type]).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    if (typeVal.includes('debit') || typeVal.includes('sortie') || typeVal.includes('depense') || typeVal.includes('charge')) {
-                        txType = 'debit';
-                    }
-                } else {
-                    const rawAmount = Number(String(r[mapping.amount] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
-                    if (rawAmount < 0) txType = 'debit';
-                }
-
-                // Date: try to parse from column or use today
-                let txDate = new Date().toISOString().split('T')[0];
-                if (mapping.date && r[mapping.date]) {
-                    const dVal = r[mapping.date];
-                    if (dVal instanceof Date) {
-                        txDate = dVal.toISOString().split('T')[0];
-                    } else {
-                        // Try common date month name → approximate date
-                        const monthMap = { 'janvier': '01', 'février': '02', 'mars': '03', 'avril': '04', 'mai': '05', 'juin': '06', 'juillet': '07', 'août': '08', 'septembre': '09', 'octobre': '10', 'novembre': '11', 'décembre': '12', 'jan': '01', 'fev': '02', 'mar': '03', 'avr': '04', 'jui': '06', 'jul': '07', 'aou': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12' };
-                        const dStr = String(dVal).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                        const foundMonth = Object.keys(monthMap).find(m => dStr.includes(m));
-                        if (foundMonth) {
-                            txDate = `2026-${monthMap[foundMonth]}-15`;
-                        } else {
-                            const parsed = new Date(dVal);
-                            if (!isNaN(parsed)) txDate = parsed.toISOString().split('T')[0];
-                        }
-                    }
-                }
+                const txDate = (mapping.date && parseDate(r[mapping.date])) || today;
 
                 return {
-                    label: String(r[mapping.label] || 'Sans libellé'),
+                    label: String(r[mapping.label] || 'Sans libellé').substring(0, 200),
                     amount,
                     type: txType,
-                    category: mapping.category ? String(r[mapping.category] || '') : '',
+                    category: (mapping.category ? String(r[mapping.category] || '') : '').substring(0, 100),
                     date: txDate,
                     account: 'Compte courant'
                 };
             }).filter(Boolean);
 
-            // Insert in batches
+            if (!rows.length) {
+                document.getElementById('importStatus').innerHTML = '<div class="import-error">Aucune ligne valide. Vérifiez le mapping des colonnes Débit/Crédit ou Montant.</div>';
+                btn.textContent = 'Importer les données'; btn.disabled = false;
+                return;
+            }
+
             for (let i = 0; i < rows.length; i += batchSize) {
                 await sb.post('transactions', rows.slice(i, i + batchSize));
                 count += Math.min(batchSize, rows.length - i);
             }
 
-            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} transactions importées avec succès</div>`;
-            setTimeout(() => { window.location.hash = '#banque'; }, 1500);
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} transactions importées</div>`;
+            setTimeout(() => { window.location.hash = '#banque'; }, 1200);
 
         } else if (type === 'employees') {
             const rows = parsedData.map(r => {
@@ -778,55 +860,68 @@ document.getElementById('doImportBtn').addEventListener('click', async () => {
                 if (!firstName && !lastName) return null;
 
                 const emp = {
-                    first_name: firstName,
-                    last_name: lastName,
+                    first_name: firstName.substring(0, 100),
+                    last_name: lastName.substring(0, 100),
                     status: 'En poste'
                 };
-                if (mapping.email && r[mapping.email]) emp.email = String(r[mapping.email]);
-                if (mapping.role && r[mapping.role]) emp.role = String(r[mapping.role]);
-                if (mapping.department && r[mapping.department]) emp.department = String(r[mapping.department]);
-                if (mapping.phone && r[mapping.phone]) emp.phone = String(r[mapping.phone]);
+                if (mapping.email && r[mapping.email]) emp.email = String(r[mapping.email]).substring(0, 200);
+                if (mapping.role && r[mapping.role]) emp.role = String(r[mapping.role]).substring(0, 100);
+                if (mapping.department && r[mapping.department]) emp.department = String(r[mapping.department]).substring(0, 100);
+                if (mapping.phone && r[mapping.phone]) emp.phone = String(r[mapping.phone]).substring(0, 30);
                 if (mapping.start_date && r[mapping.start_date]) {
-                    const d = r[mapping.start_date];
-                    if (d instanceof Date) emp.start_date = d.toISOString().split('T')[0];
-                    else { const p = new Date(d); if (!isNaN(p)) emp.start_date = p.toISOString().split('T')[0]; }
+                    const parsed = parseDate(r[mapping.start_date]);
+                    if (parsed) emp.start_date = parsed;
                 }
                 return emp;
             }).filter(Boolean);
 
+            if (!rows.length) {
+                document.getElementById('importStatus').innerHTML = '<div class="import-error">Aucun collaborateur valide. Vérifiez les colonnes Prénom et Nom.</div>';
+                btn.textContent = 'Importer les données'; btn.disabled = false;
+                return;
+            }
+
             for (let i = 0; i < rows.length; i += batchSize) {
-                await sb.post('employees', rows.slice(i, i + batchSize));
+                const resp = await sb.post('employees', rows.slice(i, i + batchSize));
+                if (resp && resp.code) throw new Error(resp.message || 'Erreur Supabase');
                 count += Math.min(batchSize, rows.length - i);
             }
 
-            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} collaborateurs importés avec succès</div>`;
-            setTimeout(() => { window.location.hash = '#rh'; }, 1500);
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} collaborateurs importés</div>`;
+            setTimeout(() => { window.location.hash = '#rh'; }, 1200);
 
         } else if (type === 'budgets') {
             const rows = parsedData.map(r => {
-                const totalAmount = Math.abs(Number(String(r[mapping.total_amount] || 0).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+                const totalAmount = Math.abs(parseAmount(r[mapping.total_amount]));
                 if (totalAmount === 0) return null;
 
                 const budget = {
-                    name: String(r[mapping.name] || 'Sans nom'),
+                    name: String(r[mapping.name] || 'Sans nom').substring(0, 200),
                     total_amount: totalAmount,
                     spent_amount: 0
                 };
-                if (mapping.department && r[mapping.department]) budget.department = String(r[mapping.department]);
-                if (mapping.spent_amount && r[mapping.spent_amount]) {
-                    budget.spent_amount = Math.abs(Number(String(r[mapping.spent_amount]).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0);
+                if (mapping.department && r[mapping.department]) budget.department = String(r[mapping.department]).substring(0, 100);
+                if (mapping.spent_amount && r[mapping.spent_amount] !== undefined && r[mapping.spent_amount] !== '') {
+                    budget.spent_amount = Math.abs(parseAmount(r[mapping.spent_amount]));
                 }
-                if (mapping.period && r[mapping.period]) budget.period = String(r[mapping.period]);
+                if (mapping.period && r[mapping.period]) budget.period = String(r[mapping.period]).substring(0, 50);
                 return budget;
             }).filter(Boolean);
 
+            if (!rows.length) {
+                document.getElementById('importStatus').innerHTML = '<div class="import-error">Aucun budget valide. Vérifiez la colonne Montant alloué.</div>';
+                btn.textContent = 'Importer les données'; btn.disabled = false;
+                return;
+            }
+
             for (let i = 0; i < rows.length; i += batchSize) {
-                await sb.post('budgets', rows.slice(i, i + batchSize));
+                const resp = await sb.post('budgets', rows.slice(i, i + batchSize));
+                if (resp && resp.code) throw new Error(resp.message || 'Erreur Supabase');
                 count += Math.min(batchSize, rows.length - i);
             }
 
-            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} budgets importés avec succès</div>`;
-            setTimeout(() => { window.location.hash = '#budgets'; }, 1500);
+            document.getElementById('importStatus').innerHTML = `<div class="import-success">${count} budgets importés</div>`;
+            setTimeout(() => { window.location.hash = '#budgets'; }, 1200);
         }
 
         // Also save as dataset for history
