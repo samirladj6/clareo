@@ -120,14 +120,13 @@ if (contactForm) {
 
         // Collect form data
         const formData = new FormData(contactForm);
-        const needs = formData.getAll('needs');
         const data = {
             first_name: formData.get('firstName'),
             last_name: formData.get('lastName'),
             email: formData.get('email'),
             company: formData.get('company'),
             employees: formData.get('employees'),
-            needs: needs,
+            sector: formData.get('sector'),
             message: formData.get('message'),
             created_at: new Date().toISOString()
         };
