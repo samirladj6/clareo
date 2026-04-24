@@ -662,9 +662,11 @@ img { max-width: 100%; }
     background: var(--secondary);
 }
 .stats-grid-3 {
-    grid-template-columns: repeat(3, 1fr) !important;
-    max-width: 900px;
+    grid-template-columns: repeat(3, auto) !important;
+    max-width: 800px;
     margin: 0 auto;
+    justify-content: center;
+    gap: 80px;
 }
 .stats-grid {
     display: grid;
@@ -711,6 +713,11 @@ img { max-width: 100%; }
 .pricing-grid-2 {
     grid-template-columns: repeat(2, 1fr);
     max-width: 880px;
+    margin: 0 auto;
+}
+.pricing-grid-1 {
+    grid-template-columns: 1fr;
+    max-width: 480px;
     margin: 0 auto;
 }
 .pricing-note {
