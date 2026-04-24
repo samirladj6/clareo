@@ -110,7 +110,7 @@ img { max-width: 100%; }
 }
 .logo {
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--secondary);
     display: flex;
     align-items: center;
@@ -303,11 +303,11 @@ img { max-width: 100%; }
 }
 .hero h1 {
     font-size: clamp(2.5rem, 5.5vw, 4.5rem);
-    font-weight: 800;
+    font-weight: 600;
     color: var(--secondary);
-    line-height: 1.02;
+    line-height: 1.05;
     margin-bottom: 28px;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.045em;
 }
 .gradient-text {
     background: var(--gradient-brand);
@@ -615,11 +615,11 @@ img { max-width: 100%; }
 }
 .section-header h2 {
     font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-    font-weight: 800;
+    font-weight: 600;
     color: var(--secondary);
     margin-bottom: 18px;
-    line-height: 1.12;
-    letter-spacing: -0.035em;
+    line-height: 1.15;
+    letter-spacing: -0.04em;
 }
 .section-header p {
     font-size: 1.08rem;
@@ -738,7 +738,7 @@ img { max-width: 100%; }
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.2rem;
     flex-shrink: 0;
 }
@@ -802,7 +802,7 @@ img { max-width: 100%; }
 .stat { color: white; }
 .stat-value {
     font-size: 3rem;
-    font-weight: 800;
+    font-weight: 700;
     display: inline;
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--teal) 100%);
     -webkit-background-clip: text;
@@ -903,7 +903,7 @@ img { max-width: 100%; }
 }
 .pricing-card h3 {
     font-size: 1.5rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--secondary);
     margin-bottom: 8px;
 }
@@ -920,7 +920,7 @@ img { max-width: 100%; }
 }
 .price-amount {
     font-size: 2.5rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--secondary);
 }
 .price-period {
@@ -1036,7 +1036,7 @@ img { max-width: 100%; }
 }
 .cta-box h2 {
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 16px;
     position: relative;
 }
@@ -1398,7 +1398,7 @@ img { max-width: 100%; }
 }
 .page-hero-text h1 {
     font-size: 2.8rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--secondary);
     line-height: 1.15;
     margin: 16px 0 20px;
@@ -1795,7 +1795,7 @@ img { max-width: 100%; }
 }
 .highlight-content h2 {
     font-size: 1.6rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--secondary);
     margin-bottom: 20px;
 }
