@@ -1,3 +1,19 @@
+// ===== Dark mode =====
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('clareo-theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+document.documentElement.setAttribute('data-theme', initialTheme);
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('clareo-theme', next);
+    });
+}
+
 // ===== Navbar scroll effect =====
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {

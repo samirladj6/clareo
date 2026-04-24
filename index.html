@@ -24,6 +24,10 @@
                 <a href="#faq">FAQ</a>
                 <a href="#contact" class="btn btn-nav">Recevoir mon MVP gratuit</a>
             </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Changer le thème">
+                <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </button>
             <button class="hamburger" id="hamburger" aria-label="Menu">
                 <span></span><span></span><span></span>
             </button>
@@ -290,57 +294,47 @@
                 <h2>De votre besoin à votre logiciel, <br>en 4 étapes</h2>
                 <p>Pas de projet IT complexe. Pas d'engagement. Pas de surprise.</p>
             </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Vous décrivez votre besoin</h3>
-                        <p>On échange 30 minutes pour comprendre ce qui vous fait perdre du temps aujourd'hui. Un formulaire ou un appel, c'est vous qui choisissez.</p>
-                    </div>
-                    <div class="step-visual">
-                        <div class="step-icon-box">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <div class="steps-horizontal">
+                <div class="steps-line"></div>
+                <div class="step-h">
+                    <div class="step-h-number-wrap">
+                        <span class="step-h-number">01</span>
+                        <div class="step-h-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
                         </div>
                     </div>
+                    <h3>Vous décrivez votre besoin</h3>
+                    <p>On échange 30 minutes pour comprendre ce qui vous fait perdre du temps. Formulaire ou appel, c'est vous qui choisissez.</p>
                 </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>On vous livre un MVP gratuit</h3>
-                        <p>Sous 7 jours, vous recevez un premier outil fonctionnel sur votre cas réel. Vous touchez du doigt ce qu'on peut faire — gratuitement, sans engagement.</p>
-                    </div>
-                    <div class="step-visual">
-                        <div class="step-icon-box">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <div class="step-h">
+                    <div class="step-h-number-wrap">
+                        <span class="step-h-number">02</span>
+                        <div class="step-h-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         </div>
                     </div>
+                    <h3>On vous livre un MVP gratuit</h3>
+                    <p>Sous 7 jours, vous recevez un premier outil fonctionnel sur votre cas réel — gratuitement, sans engagement.</p>
                 </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>On construit le logiciel complet</h3>
-                        <p>Si le MVP vous plaît, on développe la version complète en quelques semaines. Vous validez à chaque étape, pas de mauvaise surprise.</p>
-                    </div>
-                    <div class="step-visual">
-                        <div class="step-icon-box">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                <div class="step-h">
+                    <div class="step-h-number-wrap">
+                        <span class="step-h-number">03</span>
+                        <div class="step-h-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                         </div>
                     </div>
+                    <h3>On construit le logiciel complet</h3>
+                    <p>Si le MVP vous plaît, on développe la version complète en quelques semaines. Vous validez à chaque étape.</p>
                 </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>Il vous appartient à vie</h3>
-                        <p>Le code, les données, l'hébergement : tout est à vous. Pas d'abonnement à vie, pas de dépendance. On reste dispo pour les évolutions si vous le souhaitez.</p>
-                    </div>
-                    <div class="step-visual">
-                        <div class="step-icon-box">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                <div class="step-h">
+                    <div class="step-h-number-wrap">
+                        <span class="step-h-number">04</span>
+                        <div class="step-h-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
                         </div>
                     </div>
+                    <h3>Il vous appartient à vie</h3>
+                    <p>Code, données, hébergement : tout est à vous. Pas d'abonnement, pas de dépendance.</p>
                 </div>
             </div>
         </div>
