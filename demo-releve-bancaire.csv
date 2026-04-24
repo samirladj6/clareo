@@ -1,0 +1,25 @@
+Date opération;Description;Débit;Crédit;Solde;Nature
+02/01/2026;Virement SARL Dupont;;4500;4500;Client
+05/01/2026;Loyer janvier bureau;1850;;2650;Charges fixes
+08/01/2026;Abonnement Google Workspace;89,50;;2560,50;IT
+12/01/2026;Facture client Martin SA;;6780;9340,50;Client
+15/01/2026;Salaires équipe janvier;18500;;-9159,50;Salaires
+20/01/2026;Remboursement URSSAF;3200;;-12359,50;Cotisations
+28/01/2026;Virement client Leroy;;12800;440,50;Client
+03/02/2026;EDF facture électricité;245,80;;194,70;Charges
+07/02/2026;Virement Tech Solutions;;8900;9094,70;Client
+10/02/2026;Assurance RC Pro;380;;8714,70;Assurance
+14/02/2026;Note de frais commerciale;1240;;7474,70;Frais pro
+18/02/2026;Facture NovaTech;;15600;23074,70;Client
+22/02/2026;Formation Python dev team;2400;;20674,70;Formation
+05/03/2026;Virement ABC Corp;;9500;30174,70;Client
+10/03/2026;Fournitures bureau Amazon;156,30;;30018,40;Fournitures
+15/03/2026;Salaires équipe mars;19200;;10818,40;Salaires
+20/03/2026;Virement GlobalServ;;7300;18118,40;Client
+25/03/2026;Loyer mars bureau;1850;;16268,40;Charges fixes
+02/04/2026;Facture FlexiLog;;11200;27468,40;Client
+08/04/2026;Déplacement Paris commercial;580;;26888,40;Frais pro
+12/04/2026;Virement DataFlow;;4850;31738,40;Client
+15/04/2026;Salaires équipe avril;19200;;12538,40;Salaires
+18/04/2026;Pub LinkedIn Ads;1500;;11038,40;Marketing
+22/04/2026;Facture Petit Group;;6200;17238,40;Client

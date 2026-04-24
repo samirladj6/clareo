@@ -1,0 +1,13 @@
+Matricule;Nom de famille;Prénom;Email pro;Fonction;Service;Tel mobile;Date embauche;Manager
+EMP001;Martin;Sophie;sophie.martin@entreprise.fr;Directrice commerciale;Commercial;0612345678;15/03/2020;Samir L.
+EMP002;Dubois;Lucas;lucas.dubois@entreprise.fr;Développeur senior;Technique;0623456789;02/09/2021;Thomas B.
+EMP003;Bernard;Emma;emma.bernard@entreprise.fr;Responsable RH;RH;0634567890;10/01/2022;Samir L.
+EMP004;Leroy;Hugo;hugo.leroy@entreprise.fr;Comptable;Finance;0645678901;05/06/2022;Clara P.
+EMP005;Moreau;Léa;lea.moreau@entreprise.fr;Chargée de communication;Marketing;0656789012;18/11/2022;Julie R.
+EMP006;Petit;Noah;noah.petit@entreprise.fr;Développeur junior;Technique;0667890123;03/04/2023;Thomas B.
+EMP007;Roux;Camille;camille.roux@entreprise.fr;Commerciale terrain;Commercial;0678901234;22/08/2023;Sophie M.
+EMP008;Fournier;Louis;louis.fournier@entreprise.fr;Designer UI/UX;Technique;0689012345;14/01/2024;Thomas B.
+EMP009;Girard;Chloé;chloe.girard@entreprise.fr;Office manager;RH;0690123456;07/03/2024;Emma B.
+EMP010;Bonnet;Arthur;arthur.bonnet@entreprise.fr;Business developer;Commercial;0601234567;20/09/2024;Sophie M.
+EMP011;Lambert;Inès;ines.lambert@entreprise.fr;DevOps engineer;Technique;0611111111;05/02/2025;Thomas B.
+EMP012;Faure;Paul;paul.faure@entreprise.fr;Contrôleur de gestion;Finance;0622222222;12/05/2025;Clara P.

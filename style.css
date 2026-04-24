@@ -1188,6 +1188,29 @@ img { max-width: 100%; }
     text-decoration: underline;
 }
 
+/* Feature example tag (sector hint at bottom of card) */
+.feature-example {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-lighter, #94A3B8);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/* Highlight CTA card (last tile — "votre besoin, pas dans la liste ?") */
+.feature-card-highlight-cta {
+    background: linear-gradient(135deg, #F5F3FF 0%, #FCE7F3 100%);
+    border: 2px dashed var(--primary, #4F46E5);
+}
+.feature-card-highlight-cta h3 {
+    color: var(--primary, #4F46E5);
+}
+.feature-card-highlight-cta .feature-link {
+    margin-top: 12px;
+}
+
 /* ===== Price Contact ===== */
 .price-contact {
     font-size: 1.6rem;
