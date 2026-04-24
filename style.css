@@ -661,6 +661,11 @@ img { max-width: 100%; }
     padding: 80px 0;
     background: var(--secondary);
 }
+.stats-grid-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    max-width: 900px;
+    margin: 0 auto;
+}
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -702,6 +707,18 @@ img { max-width: 100%; }
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     align-items: start;
+}
+.pricing-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 880px;
+    margin: 0 auto;
+}
+.pricing-note {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 0.88rem;
+    color: var(--text-light, #64748B);
+    font-style: italic;
 }
 .pricing-card {
     background: var(--white);
