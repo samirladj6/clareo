@@ -75,54 +75,73 @@
                     <div class="browser-content">
                         <div class="dashboard-mock">
                             <div class="dash-sidebar">
+                                <div class="dash-sidebar-brand">
+                                    <span class="dash-brand-icon">&#9670;</span> Votre outil
+                                </div>
                                 <div class="dash-sidebar-item active">
-                                    <span class="dash-icon">&#9632;</span> Tableau de bord
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                                    Tableau de bord
                                 </div>
                                 <div class="dash-sidebar-item">
-                                    <span class="dash-icon">&#8644;</span> Trésorerie
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                                    Trésorerie
                                 </div>
                                 <div class="dash-sidebar-item">
-                                    <span class="dash-icon">&#9776;</span> Budgets
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>
+                                    Budgets
                                 </div>
                                 <div class="dash-sidebar-item">
-                                    <span class="dash-icon">&#9823;</span> Équipe RH
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+                                    Équipe
                                 </div>
                                 <div class="dash-sidebar-item">
-                                    <span class="dash-icon">&#9881;</span> Banque
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                                    Banque
                                 </div>
                             </div>
                             <div class="dash-main">
                                 <div class="dash-header-row">
-                                    <h3>Vue d'ensemble</h3>
+                                    <div>
+                                        <h3>Vue d'ensemble</h3>
+                                        <p class="dash-subtitle">Performance de votre activité</p>
+                                    </div>
                                     <span class="dash-date">Avril 2026</span>
                                 </div>
                                 <div class="dash-cards">
                                     <div class="dash-card dash-card-blue">
+                                        <div class="dash-card-icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
                                         <span class="dash-card-label">Trésorerie</span>
-                                        <span class="dash-card-value">&euro;47 230</span>
-                                        <span class="dash-card-trend up">+12%</span>
+                                        <span class="dash-card-value">47 230&thinsp;€</span>
+                                        <span class="dash-card-trend up">&#8599; +12% ce mois</span>
                                     </div>
                                     <div class="dash-card dash-card-green">
+                                        <div class="dash-card-icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg></div>
                                         <span class="dash-card-label">Budget restant</span>
-                                        <span class="dash-card-value">&euro;18 900</span>
-                                        <span class="dash-card-trend up">67%</span>
+                                        <span class="dash-card-value">18 900&thinsp;€</span>
+                                        <span class="dash-card-trend up">67% disponible</span>
                                     </div>
                                     <div class="dash-card dash-card-purple">
+                                        <div class="dash-card-icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
                                         <span class="dash-card-label">Collaborateurs</span>
                                         <span class="dash-card-value">12</span>
                                         <span class="dash-card-trend neutral">stable</span>
                                     </div>
                                 </div>
                                 <div class="dash-chart">
-                                    <div class="dash-chart-title">Flux de trésorerie</div>
+                                    <div class="dash-chart-header">
+                                        <div class="dash-chart-title">Flux de trésorerie</div>
+                                        <div class="dash-chart-legend">
+                                            <span class="legend-item"><span class="legend-dot dot-primary"></span>Entrées</span>
+                                        </div>
+                                    </div>
                                     <div class="dash-chart-bars">
-                                        <div class="dash-bar" style="height:60%"><span>Jan</span></div>
-                                        <div class="dash-bar" style="height:45%"><span>Fév</span></div>
-                                        <div class="dash-bar" style="height:70%"><span>Mar</span></div>
-                                        <div class="dash-bar" style="height:55%"><span>Avr</span></div>
-                                        <div class="dash-bar" style="height:80%"><span>Mai</span></div>
-                                        <div class="dash-bar" style="height:65%"><span>Jun</span></div>
-                                        <div class="dash-bar highlight" style="height:90%"><span>Jul</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill" style="height:48%"></span><span class="dash-bar-label">Jan</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill" style="height:36%"></span><span class="dash-bar-label">Fév</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill" style="height:62%"></span><span class="dash-bar-label">Mar</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill" style="height:50%"></span><span class="dash-bar-label">Avr</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill" style="height:74%"></span><span class="dash-bar-label">Mai</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill" style="height:58%"></span><span class="dash-bar-label">Jun</span></div>
+                                        <div class="dash-bar"><span class="dash-bar-fill active" style="height:92%"></span><span class="dash-bar-label active">Jul</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -138,17 +157,35 @@
         <div class="container">
             <div class="problem-grid">
                 <div class="problem-card">
-                    <div class="problem-icon">&#128178;</div>
+                    <div class="problem-icon icon-pink">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="6" width="20" height="14" rx="2"/>
+                            <path d="M2 10h20"/>
+                            <path d="M6 15h2"/>
+                            <path d="M11 15h2"/>
+                            <path d="M22 6v-.8A2.2 2.2 0 0019.8 3H4.2A2.2 2.2 0 002 5.2V6"/>
+                        </svg>
+                    </div>
                     <h3>Vous payez trop d'abonnements</h3>
                     <p>Salesforce, Odoo, Pennylane, Notion, Monday… Chaque mois, vos abonnements SaaS s'empilent. Et l'argent ne fait que sortir.</p>
                 </div>
                 <div class="problem-card">
-                    <div class="problem-icon">&#128466;</div>
+                    <div class="problem-icon icon-indigo">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 01-.837.276c-.47-.07-.802-.48-.968-.925a2.5 2.5 0 10-3.214 3.214c.446.166.855.497.925.968a.98.98 0 01-.276.837l-1.61 1.61a2.41 2.41 0 01-3.41 0l-1.568-1.568a1 1 0 00-.878-.29c-.48.083-.816.5-.963.96a2.5 2.5 0 11-3.14-3.14c.46-.148.878-.483.96-.963a1 1 0 00-.289-.878l-1.568-1.568a2.409 2.409 0 010-3.408l1.611-1.611a.98.98 0 01.837-.276c.47.07.802.48.968.925a2.5 2.5 0 103.214-3.214c-.446-.166-.855-.497-.925-.968a.98.98 0 01.276-.837l1.61-1.61a2.409 2.409 0 013.41 0l1.568 1.568c.23.23.556.338.878.29.48-.083.816-.5.963-.96a2.5 2.5 0 113.14 3.14c-.46.147-.878.483-.96.963z"/>
+                        </svg>
+                    </div>
                     <h3>Aucun outil ne fait vraiment le job</h3>
                     <p>Vous bricolez avec des tableurs et des logiciels génériques. Aucun ne correspond vraiment à votre métier, donc personne n'est content.</p>
                 </div>
                 <div class="problem-card">
-                    <div class="problem-icon">&#9200;</div>
+                    <div class="problem-icon icon-amber">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                            <circle cx="12" cy="16" r="1"/>
+                        </svg>
+                    </div>
                     <h3>Le sur-mesure paraît inaccessible</h3>
                     <p>Développer un logiciel interne coûte cher et prend des mois. Les agences facturent des dizaines de milliers d'euros pour démarrer.</p>
                 </div>
