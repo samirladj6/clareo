@@ -662,11 +662,18 @@ img { max-width: 100%; }
     background: var(--secondary);
 }
 .stats-grid-3 {
-    grid-template-columns: repeat(3, auto) !important;
-    max-width: 800px;
+    display: flex !important;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 60px;
+    max-width: 900px;
     margin: 0 auto;
-    justify-content: center;
-    gap: 80px;
+}
+.stats-grid-3 .stat {
+    text-align: center;
+    min-width: 180px;
+    flex: 1;
 }
 .stats-grid {
     display: grid;
@@ -716,9 +723,12 @@ img { max-width: 100%; }
     margin: 0 auto;
 }
 .pricing-grid-1 {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    justify-content: center;
+}
+.pricing-grid-1 .pricing-card {
     max-width: 480px;
-    margin: 0 auto;
+    width: 100%;
 }
 .pricing-note {
     text-align: center;
