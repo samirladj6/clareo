@@ -653,18 +653,32 @@ img { max-width: 100%; }
 /* ===== Problem Section ===== */
 .problem-section {
     padding: 100px 0 60px;
-    background: var(--white);
+    background: radial-gradient(ellipse at 20% 50%, rgba(236, 72, 153, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 30%, rgba(99, 102, 241, 0.10) 0%, transparent 60%),
+                #FFFFFF;
     position: relative;
     overflow: hidden;
 }
 .problem-section::before {
     content: '';
     position: absolute;
-    top: -100px;
-    left: -150px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.10) 0%, transparent 70%);
+    top: -150px;
+    left: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.30) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+}
+.problem-section::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
     border-radius: 50%;
     filter: blur(80px);
     pointer-events: none;
@@ -788,18 +802,20 @@ img { max-width: 100%; }
 /* ===== Features ===== */
 .features {
     padding: 120px 0;
-    background: var(--surface-warm);
+    background: radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(236, 72, 153, 0.12) 0%, transparent 55%),
+                var(--surface-warm);
     position: relative;
     overflow: hidden;
 }
 .features::before {
     content: '';
     position: absolute;
-    top: 10%;
-    right: -200px;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, transparent 70%);
+    top: 5%;
+    right: -250px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.30) 0%, transparent 70%);
     border-radius: 50%;
     filter: blur(100px);
     pointer-events: none;
@@ -807,13 +823,13 @@ img { max-width: 100%; }
 .features::after {
     content: '';
     position: absolute;
-    bottom: 5%;
-    left: -150px;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+    bottom: 0;
+    left: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(90px);
+    filter: blur(100px);
     pointer-events: none;
 }
 .features .container { position: relative; z-index: 1; }
@@ -903,20 +919,34 @@ img { max-width: 100%; }
 /* ===== How it Works ===== */
 .how-it-works {
     padding: 120px 0;
-    background: var(--white);
+    background: radial-gradient(ellipse at 70% 50%, rgba(236, 72, 153, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(99, 102, 241, 0.10) 0%, transparent 55%),
+                #FFFFFF;
     position: relative;
     overflow: hidden;
 }
 .how-it-works::before {
     content: '';
     position: absolute;
-    top: 30%;
-    right: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, transparent 70%);
+    top: 10%;
+    right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.28) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(80px);
+    filter: blur(100px);
+    pointer-events: none;
+}
+.how-it-works::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(90px);
     pointer-events: none;
 }
 .how-it-works .container { position: relative; z-index: 1; }
@@ -1089,19 +1119,21 @@ img { max-width: 100%; }
 /* ===== Pricing ===== */
 .pricing {
     padding: 100px 0;
-    background: var(--gray-50);
+    background: radial-gradient(ellipse at 30% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.10) 0%, transparent 55%),
+                var(--gray-50);
     overflow: hidden;
 }
 .pricing::after {
     content: '';
     position: absolute;
-    top: 20%;
-    left: -100px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    top: 10%;
+    left: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.30) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(80px);
+    filter: blur(100px);
     pointer-events: none;
     z-index: 0;
 }
@@ -1226,32 +1258,34 @@ img { max-width: 100%; }
 /* ===== FAQ ===== */
 .faq {
     padding: 120px 0;
-    background: var(--white);
+    background: radial-gradient(ellipse at 75% 30%, rgba(139, 92, 246, 0.14) 0%, transparent 55%),
+                radial-gradient(ellipse at 25% 70%, rgba(236, 72, 153, 0.12) 0%, transparent 55%),
+                #FFFFFF;
     position: relative;
     overflow: hidden;
 }
 .faq::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: -100px;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+    top: -100px;
+    right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.28) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(90px);
+    filter: blur(100px);
     pointer-events: none;
 }
 .faq::after {
     content: '';
     position: absolute;
-    bottom: 10%;
-    left: -150px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.07) 0%, transparent 70%);
+    bottom: -100px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(80px);
+    filter: blur(90px);
     pointer-events: none;
 }
 .faq .container { position: relative; z-index: 1; }
@@ -1396,18 +1430,20 @@ img { max-width: 100%; }
 /* ===== Contact ===== */
 .contact {
     padding: 100px 0;
-    background: var(--gray-50);
+    background: radial-gradient(ellipse at 80% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 70%, rgba(236, 72, 153, 0.12) 0%, transparent 55%),
+                var(--gray-50);
     position: relative;
     overflow: hidden;
 }
 .contact::before {
     content: '';
     position: absolute;
-    top: -50px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, transparent 70%);
+    top: -100px;
+    right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.28) 0%, transparent 70%);
     border-radius: 50%;
     filter: blur(100px);
     pointer-events: none;
@@ -1415,13 +1451,13 @@ img { max-width: 100%; }
 .contact::after {
     content: '';
     position: absolute;
-    bottom: -100px;
-    left: -100px;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, transparent 70%);
+    bottom: -150px;
+    left: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(90px);
+    filter: blur(100px);
     pointer-events: none;
 }
 .contact .container { position: relative; z-index: 1; }
