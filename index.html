@@ -22,8 +22,8 @@
     <meta name="twitter:title" content="Clareo — Arrêtez de louer. Possédez votre logiciel.">
     <meta name="twitter:description" content="Logiciels sur-mesure pour TPE et PME. MVP gratuit, paiement unique, l'outil vous appartient.">
 
-    <!-- Favicon SVG inline (gradient violet → rose) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366F1'/%3E%3Cstop offset='100%25' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M16 8 L24 16 L16 24 L8 16 Z' fill='white' opacity='0.95'/%3E%3C/svg%3E">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/clareo-favicon.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,8 +34,9 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
-            <a href="index.html" class="logo">
-                <span class="logo-icon">&#9670;</span> Clareo
+            <a href="index.html" class="logo" aria-label="Clareo">
+                <img src="assets/clareo-logo.svg" alt="Clareo" class="logo-light">
+                <img src="assets/clareo-logo-dark.svg" alt="Clareo" class="logo-dark">
             </a>
             <div class="nav-links" id="navLinks">
                 <a href="#features">Cas d'usage</a>
@@ -100,7 +101,7 @@
                         <div class="dashboard-mock">
                             <div class="dash-sidebar">
                                 <div class="dash-sidebar-brand">
-                                    <span class="dash-brand-icon">&#9670;</span> Votre outil
+                                    <img src="assets/clareo-icon.svg" alt="" class="dash-brand-icon"> Votre outil
                                 </div>
                                 <div class="dash-sidebar-item active">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -561,8 +562,8 @@
         <div class="container">
             <div class="footer-top">
                 <div class="footer-brand">
-                    <a href="index.html" class="logo">
-                        <span class="logo-icon">&#9670;</span> Clareo
+                    <a href="index.html" class="logo" aria-label="Clareo">
+                        <img src="assets/clareo-logo-dark.svg" alt="Clareo">
                     </a>
                     <p>On construit des logiciels sur-mesure pour les TPE et PME. L'outil qui vous fait gagner du temps&nbsp;— et qui vous appartient.</p>
                 </div>

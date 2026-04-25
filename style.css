@@ -109,17 +109,24 @@ img { max-width: 100%; }
     height: 72px;
 }
 .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--secondary);
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    line-height: 0;
+    transition: opacity 0.2s;
 }
-.logo-icon {
-    color: var(--primary);
-    font-size: 1.2rem;
+.logo:hover { opacity: 0.85; }
+.logo img {
+    height: 32px;
+    width: auto;
 }
+/* Light/Dark logo switching — specificity ramped to override .logo img */
+.logo img.logo-light { display: block; }
+.logo img.logo-dark { display: none; }
+[data-theme="dark"] .logo img.logo-light { display: none; }
+[data-theme="dark"] .logo img.logo-dark { display: block; }
+/* Footer logo always uses the dark version (white text on dark bg) */
+.footer-brand .logo { margin-bottom: 14px; }
+.footer-brand .logo img { height: 36px; display: block; }
 .nav-links {
     display: flex;
     align-items: center;
@@ -441,8 +448,10 @@ img { max-width: 100%; }
     letter-spacing: -0.01em;
 }
 .dash-brand-icon {
-    color: var(--primary);
-    font-size: 0.85rem;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
 }
 .dash-sidebar-item {
     padding: 9px 12px;
