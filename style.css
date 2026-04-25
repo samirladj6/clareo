@@ -109,24 +109,30 @@ img { max-width: 100%; }
     height: 72px;
 }
 .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--secondary);
     display: inline-flex;
     align-items: center;
-    line-height: 0;
+    gap: 10px;
+    letter-spacing: -0.02em;
     transition: opacity 0.2s;
 }
 .logo:hover { opacity: 0.85; }
-.logo img {
-    height: 32px;
-    width: auto;
+.logo-icon {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
 }
-/* Light/Dark logo switching — specificity ramped to override .logo img */
-.logo img.logo-light { display: block; }
-.logo img.logo-dark { display: none; }
-[data-theme="dark"] .logo img.logo-light { display: none; }
-[data-theme="dark"] .logo img.logo-dark { display: block; }
-/* Footer logo always uses the dark version (white text on dark bg) */
-.footer-brand .logo { margin-bottom: 14px; }
-.footer-brand .logo img { height: 36px; display: block; }
+.logo-icon svg {
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px -2px rgba(99, 102, 241, 0.4);
+}
+.footer-brand .logo {
+    color: white;
+    margin-bottom: 14px;
+}
 .nav-links {
     display: flex;
     align-items: center;
@@ -448,10 +454,13 @@ img { max-width: 100%; }
     letter-spacing: -0.01em;
 }
 .dash-brand-icon {
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+}
+.dash-brand-icon svg {
+    display: block;
+    border-radius: 5px;
 }
 .dash-sidebar-item {
     padding: 9px 12px;

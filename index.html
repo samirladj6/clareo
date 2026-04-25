@@ -22,8 +22,8 @@
     <meta name="twitter:title" content="Clareo — Arrêtez de louer. Possédez votre logiciel.">
     <meta name="twitter:description" content="Logiciels sur-mesure pour TPE et PME. MVP gratuit, paiement unique, l'outil vous appartient.">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="assets/clareo-favicon.svg">
+    <!-- Favicon SVG inline (gradient violet → rose) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%236366F1'/%3E%3Cstop offset='100%25' stop-color='%23EC4899'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M16 8 L24 16 L16 24 L8 16 Z' fill='white' opacity='0.95'/%3E%3C/svg%3E">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,9 +34,20 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
-            <a href="index.html" class="logo" aria-label="Clareo">
-                <img src="assets/clareo-logo.svg" alt="Clareo" class="logo-light">
-                <img src="assets/clareo-logo-dark.svg" alt="Clareo" class="logo-dark">
+            <a href="index.html" class="logo">
+                <span class="logo-icon" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#6366F1"/>
+                                <stop offset="100%" stop-color="#EC4899"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="32" height="32" rx="8" fill="url(#logoGrad)"/>
+                        <path d="M16 8 L24 16 L16 24 L8 16 Z" fill="white" opacity="0.95"/>
+                    </svg>
+                </span>
+                Clareo
             </a>
             <div class="nav-links" id="navLinks">
                 <a href="#features">Cas d'usage</a>
@@ -101,7 +112,19 @@
                         <div class="dashboard-mock">
                             <div class="dash-sidebar">
                                 <div class="dash-sidebar-brand">
-                                    <img src="assets/clareo-icon.svg" alt="" class="dash-brand-icon"> Votre outil
+                                    <span class="dash-brand-icon" aria-hidden="true">
+                                        <svg width="18" height="18" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                            <defs>
+                                                <linearGradient id="logoGradDash" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" stop-color="#6366F1"/>
+                                                    <stop offset="100%" stop-color="#EC4899"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <rect width="32" height="32" rx="7" fill="url(#logoGradDash)"/>
+                                            <path d="M16 8 L24 16 L16 24 L8 16 Z" fill="white" opacity="0.95"/>
+                                        </svg>
+                                    </span>
+                                    Votre outil
                                 </div>
                                 <div class="dash-sidebar-item active">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
@@ -562,8 +585,20 @@
         <div class="container">
             <div class="footer-top">
                 <div class="footer-brand">
-                    <a href="index.html" class="logo" aria-label="Clareo">
-                        <img src="assets/clareo-logo-dark.svg" alt="Clareo">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon" aria-hidden="true">
+                            <svg width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="logoGradFooter" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#6366F1"/>
+                                        <stop offset="100%" stop-color="#EC4899"/>
+                                    </linearGradient>
+                                </defs>
+                                <rect width="32" height="32" rx="8" fill="url(#logoGradFooter)"/>
+                                <path d="M16 8 L24 16 L16 24 L8 16 Z" fill="white" opacity="0.95"/>
+                            </svg>
+                        </span>
+                        Clareo
                     </a>
                     <p>On construit des logiciels sur-mesure pour les TPE et PME. L'outil qui vous fait gagner du temps&nbsp;— et qui vous appartient.</p>
                 </div>
